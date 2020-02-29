@@ -1,4 +1,5 @@
 import numpy as np
+from station import Station
 
 class Gate(Station):
   def __init__(self):
