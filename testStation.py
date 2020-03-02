@@ -15,14 +15,18 @@ def main(args):
   rows = len(sheet)
   stations = []
     for i in range(0, rows):
-    # the location in file is actually the entry i think
-    name = sheet.values[i, 8]
-    boro = sheet.values[i, 6]
-    routes = str(sheet.values[i, 7]).split(",")
-    station = Station(name = name, boro = boro, routes = routes)    
-    stations.append(station)              
-  print(len(stations))
-  stations[0].print()
+      # the location in file is actually the entry i think
+      name = sheet.values[i, 8]
+      boro = sheet.values[i, 6]
+      routes = str(sheet.values[i, 7]).split(",")
+      station = Station(name = name, boro = boro, routes = routes)    
+      stations.append(station)              
+ 
+    for n in range(0,len(stations)):
+      stations[n].print()
+      print()
+
+    print('Number of stations:',len(stations))
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
