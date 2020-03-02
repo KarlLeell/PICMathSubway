@@ -9,12 +9,12 @@ class Gate(Station):
     # self.boro = ''
     # self.routes = []
     self.gate_id = ''
-    self.task_matrix = np.zeros((24*12, 7))
+    self.task_matrix = np.zeros((24*12, 1))
+    self.day = ''
     self.neighbors = []
     self.edge_dist_tt = []
     self.comments = ''
     # def abs_loc(self):
-    #   pass
   def find_neighbors(self):
     pass
   def calc_edge_dist_tt(self):
