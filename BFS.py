@@ -1,5 +1,6 @@
 import random, os, sys, time
 import numpy as np
+from operator import attrgetter
 
 class Params:
   def __init__(self, weights=[], sp=0.10, lapse_rate=0.05, pruning_threshold=0.0, mu=0.0, sigma=1.0):
@@ -12,10 +13,10 @@ class Params:
 
 class Node(Gate):
   def __init__(self, params):
-  	self.value = calc_value()
+  	self.value = heuristic_value_function(params)
   	self.parent = None
     self.children = []
-  def calc_value(self):
+  def heuristic_value_function(self, params):
   	pass
   def remove_child(self, n):
   	pass
@@ -34,7 +35,12 @@ def RandomMove(node, params):
   return random.choice(node.children)
 
 def InitializeChildren(node, params):
-  pass
+  for i in range(len(node.neighbors)):
+    if (node.neighbors[i].begin_time - node.edge_dist_tt[i] > node.end_time):
+      child = Node(node.neighbors[i])
+      child.parent = node
+      node.children.append(child)
+  return node.children
 
 def SelectNode(root):
   ''' return the leaf node along the most promising branch '''
@@ -45,7 +51,7 @@ def SelectNode(root):
 
 def ExpandNode(node, params):
   ''' expand the current node with children, prune '''
-  Initializechildren(node, params)
+  InitializeChildren(node, params)
   Vmaxchild = ArgmaxChild(node)
   Vmax = Vmaxchild.value
   for n in node.children:
