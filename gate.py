@@ -3,7 +3,7 @@ from station import Station
 
 class Gate(Station):
   def __init__(self, name = '', loc = [0,0], boro = '', routes = [], gate_id = '', task_matrix = np.zeros((24*12, 1)),
-    day = '', neighbors = [], edge_dist_tt = [], comments = ''):
+                day = '', neighbors = [], edge_dist_tt = [], comments = ''):
     # inherited attribute
     #self.name_ = name
     #self.loc_ = loc
