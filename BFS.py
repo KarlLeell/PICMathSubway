@@ -14,9 +14,10 @@ class Node(Gate):
   def __init__(self, params):
   	self.value = calc_value()
   	self.parent = None
+    self.children = []
   def calc_value(self):
   	pass
-  def remove_neighbor(self, n):
+  def remove_child(self, n):
   	pass
 
 def Lapse(probability):
@@ -29,41 +30,41 @@ def Stop(probability):
 
 def RandomMove(node, params):
   ''' make a random move '''
-  InitializeNeighbors(node, params)
-  return random.choice(node.neighbors)
+  InitializeChildren(node, params)
+  return random.choice(node.children)
 
-def InitializeNeighbors(node, params):
+def InitializeChildren(node, params):
   pass
 
 def SelectNode(root):
   ''' return the leaf node along the most promising branch '''
   n = root
-  while len(n.neighbors) != 0:
-  	n = ArgmaxNeighbor(n)
+  while len(n.children) != 0:
+  	n = ArgmaxChild(n)
   return n
 
 def ExpandNode(node, params):
-  ''' expand the current node with neighbors, prune '''
-  InitializeNeighbors(node, params)
-  Vmaxneighbor = ArgmaxNeighbor(node)
-  Vmax = Vmaxneighbor.value
-  for n in node.neighbors:
+  ''' expand the current node with children, prune '''
+  Initializechildren(node, params)
+  Vmaxchild = ArgmaxChild(node)
+  Vmax = Vmaxchild.value
+  for n in node.children:
   	  if abs(n.value - Vmax) > params.pruning_threshold:
-  	  	n.remove_neighbor(n)
+  	  	n.remove_child(n)
 
 def Backpropagate(node, root):
   ''' update value back until root node '''
-  node.alue = ArgmaxNeighbor(node).value
+  node.value = ArgmaxChild(node).value
   if node != root:
   	Backpropagate(node.parent, root)
 
-def ArgmaxNeighbor(node):
-  ''' return the neighbor with max value '''
-  return max(node.neighbors, key=attrgetter('value'))
+def ArgmaxChild(node):
+  ''' return the child with max value '''
+  return max(node.children, key=attrgetter('value'))
 
 def MakeMove(root, params):
   ''' make an optimal move according to value function '''
-  assert len(root.neighbors) == 0
+  assert len(root.children) == 0
   if Lapse(params.lapse_rate):
   	return RandomMove(root, params)
   else:
@@ -71,9 +72,9 @@ def MakeMove(root, params):
   	  leaf = SelectNode(root)
   	  ExpandNode(leaf, params)
   	  Backpropagate(leaf, root)
-  	if root.neighbors == []:
+  	if root.children == []:
   	  ExpandNode(root, params)
-  return ArgmaxNeighbor(root)
+  return ArgmaxChild(root)
 
 
 

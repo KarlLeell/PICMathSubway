@@ -11,12 +11,12 @@ class Gate(Station):
     #self.routes_ = routes
     super().__init__(name, loc, boro, routes)
     # self attributes
-    self.gate_id_ = gate_id
-    self.task_matrix_ = task_matrix
-    self.day_ = day
-    self.neighbors_ = neighbors
-    self.edge_dist_tt_ = edge_dist_tt
-    self.comments_ = comments
+    self.gate_id = gate_id
+    self.task_matrix = task_matrix
+    self.day = day
+    self.neighbors = neighbors
+    self.edge_dist_tt = edge_dist_tt
+    self.comments = comments
 
   # def abs_loc(self):
 
