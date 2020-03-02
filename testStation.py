@@ -18,8 +18,7 @@ def main(args):
     # the location in file is actually the entry i think
     name = sheet.values[i, 8]
     boro = sheet.values[i, 6]
-    routes_str = str(sheet.values[i, 7])
-    routes = routes_str.split(",")
+    routes = str(sheet.values[i, 7]).split(",")
     station = Station(name = name, boro = boro, routes = routes)    
     stations.append(station)              
   print(len(stations))
