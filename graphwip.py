@@ -143,6 +143,13 @@ def main():
   for n in range(0,len(gates)):
     gates[n].print()
     print()
+    
+  N = len(gates)
+  adjmatrix = np.ones((N,N))
+  H=nx.Graph(adjmatrix)
+  plt.title('title')
+  nx.draw(H, with_labels=True, node_size=5, node_color="yellow",width=0.1)
+  plt.show()
 
   print('Number of stations:',len(stations))
 
