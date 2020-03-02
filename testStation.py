@@ -2,26 +2,25 @@
 # Title:  Test Station Class
 # Author: NYUPICMathSubwayGroup
 # Date:   2020.02.24
-# Comment:Need xlrd to run this test
 #==========================================
 
-import xlrd
+import pandas as pd
 import argparse
 from Station import Station
 
 def main(args):
-  station_file = xlrd.open_workbook(args.file_loc)
-  sheet = station_file.sheet_by_index(0) 
-  rows = sheet.nrows
+  print(args.file_loc)
+  sheet = station_file = pd.read_excel(args.file_loc)
+  rows = len(sheet)
   stations = []
-  for i in range(1, rows):
+    for i in range(0, rows):
     # the location in file is actually the entry i think
-    name = sheet.cell_value(i, 4)
-    boro = sheet.cell_value(i, 5)
-    routes_str = sheet.cell_value(i, 6)
-    routes = [routes_str[i] for i in range(len(routes_str))]
-    station = Station(name = name, boro = boro, routes = routes)
-    stations.append(station)
+    name = sheet.values[i, 8]
+    boro = sheet.values[i, 6]
+    routes_str = str(sheet.values[i, 7])
+    routes = routes_str.split(",")
+    station = Station(name = name, boro = boro, routes = routes)    
+    stations.append(station)              
   print(len(stations))
   stations[0].print()
 
