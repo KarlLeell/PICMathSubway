@@ -2,6 +2,7 @@
 # Title:  Test Station Class
 # Author: NYUPICMathSubwayGroup
 # Date:   2020.02.24
+# Need pandas to run this test
 #==========================================
 
 import pandas as pd
