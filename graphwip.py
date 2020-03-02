@@ -23,16 +23,16 @@ plt.show()
 
 
 
-
-
-
-
 #==========================================
 # Title:  Station Class
 # Author: NYUPICMathSubwayGroup
 # Date:   2020.02.24
 # Comment:
 #==========================================
+import pandas as pd
+import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
 
 
 
@@ -73,7 +73,7 @@ class Station:
 
 class Gate(Station):
   def __init__(self, name = '', loc = [0,0], boro = '', routes = [], gate_id = '', task_matrix = np.zeros((24*12, 1)),
-    day = '', neighbors = [], edge_dist_tt = [], comments = ''):
+    day = '', begin_time = '', neighbors = [], edge_dist_tt = [], comments = ''):
     # inherited attribute
     #self.name_ = name
     #self.loc_ = loc
@@ -84,6 +84,7 @@ class Gate(Station):
     self.gate_id_ = gate_id
     self.task_matrix_ = task_matrix
     self.day_ = day
+    self.begin_time_ = begin_time
     self.neighbors_ = neighbors
     self.edge_dist_tt_ = edge_dist_tt
     self.comments_ = comments
@@ -98,8 +99,8 @@ class Gate(Station):
   def print(self):
     super().print()
     print('Gate ID: ' + self.gate_id_) 
-    print('Day: ' + str(self.day_))
-
+    print('Day: ' + self.day_)
+    print('Begin Time: ' + str(self.begin_time_))
 
 ##C:\Users\David\Desktop\NYCT FE Required Data\SFE SAMPLE210
 
@@ -109,7 +110,6 @@ class Gate(Station):
 # Date:   2020.02.24
 # Comment:Need pandas to run this test
 #==========================================
-
 
 import argparse
 ##from Station import Station
@@ -133,7 +133,7 @@ def main():
     for i in range(begin_entry, begin_entry+12):
       task_matrix[i,0] = 1
     station = Station(name = name, boro = boro, routes = routes)
-    gate = Gate(gate_id = gate_id, day = day,
+    gate = Gate(gate_id = gate_id, day = day, begin_time = begin_time,
                 name = name, boro = boro, routes = routes)
     stations.append(station)
     gates.append(gate)
