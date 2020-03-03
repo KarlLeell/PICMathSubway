@@ -1,7 +1,7 @@
 #==========================================
-# Title:  
-# Author: 
-# Date:   
+# Title:  Reading into graph
+# Author: NYUPICMathSubwayGroup
+# Date:   2020.03.02
 # Comment:
 #==========================================
 

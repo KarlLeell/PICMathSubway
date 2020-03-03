@@ -1,3 +1,10 @@
+#==========================================
+# Title:  Gate Class
+# Author: NYUPICMathSubwayGroup
+# Date:   2020.03.02
+# Comment:
+#==========================================
+
 import numpy as np
 from station import Station
 
