@@ -47,13 +47,19 @@ class Graph():
       for prev_vertex in self.vertices[time-1]:
         prev_vertex.neighbors.append(vertex)
         # set this to be 5 for now
-        prev_vertex.edge_dist_tt.append(5)
+        if prev_vertex.name == 'Skip':
+          prev_vertex.edge_dist_tt.append(0)
+        else:
+          prev_vertex.edge_dist_tt.append(5)
         
     if time != 23:
       # connect this vertex and vertices on next layer
       for next_vertex in self.vertices[time+1]:
         vertex.neighbors.append(next_vertex)
-        vertex.edge_dist_tt.append(5)
+        if next_vertex.name == 'Skip':
+          vertex.edge_dist_tt.append(0)
+        else:
+          vertex.edge_dist_tt.append(5)
 
   def print(self):
     print('Graph for ' + self.day)

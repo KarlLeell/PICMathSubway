@@ -7,11 +7,12 @@
 
 import numpy as np
 from station import Station
+import copy as cp
 
 class Gate(Station):
 
-  def __init__(self, name = '', loc = [0,0], boro = '', routes = [], gate_id = '', begin_time = 0,
-                task_matrix = np.zeros((24*12, 1)), day = '', neighbors = [], edge_dist_tt = [], comments = ''):
+  def __init__(self, name = '', loc = None, boro = '', routes = None, gate_id = '', begin_time = 0,
+                task_matrix = np.zeros((24*12, 1)), day = '', neighbors = None, edge_dist_tt = None, comments = ''):
     # inherited attribute
     #self.name_ = name
     #self.loc_ = loc
@@ -23,8 +24,8 @@ class Gate(Station):
     self.begin_time = begin_time
     self.task_matrix = task_matrix
     self.day = day
-    self.neighbors = neighbors
-    self.edge_dist_tt = edge_dist_tt
+    self.neighbors = neighbors if neighbors is not None else []
+    self.edge_dist_tt = edge_dist_tt if edge_dist_tt is not None else []
     self.comments = comments
     self.finished = False
 

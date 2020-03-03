@@ -19,9 +19,9 @@ def main(args):
   sheet = pd.read_excel(args.file_loc)
   station_loc = pd.read_csv(args.station_loc)
   rows = len(sheet)
-  wkd_graph = Graph(day = constants.DAY[0])
-  sat_graph = Graph(day = constants.DAY[1])
-  sun_graph = Graph(day = constants.DAY[2])
+  wkd_graph = Graph(constants.DAY[0])
+  sat_graph = Graph(constants.DAY[1])
+  sun_graph = Graph(constants.DAY[2])
   #location for stations
   location_book = {}
   # build a map for stations and locations
@@ -65,10 +65,11 @@ def main(args):
     elif task.day == constants.DAY[2]:
       sun_graph.add_vertex(task)
 
-  # print and see the graphs
+  #print and see the graphs
   wkd_graph.print()
   sat_graph.print()
   sun_graph.print()
+  #wkd_graph.vertices[0][1].print()
 
 
 if __name__ == '__main__':
