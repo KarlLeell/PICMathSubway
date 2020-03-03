@@ -13,12 +13,13 @@ import copy as cp
 class Graph():
 
   def __init__(self, day = constants.DAY[0]):
-    self.empty_vertex = Gate(name = 'Skip', begin_time = 0, day = day)
+    self.day = day
+    self.empty_vertex = Gate(name = 'Skip', begin_time = 0, day = self.day)
     # list of lists of tasks at all 24 hours
     self.vertices = []
     for i in range(24):
       self.vertices.append([])
-      temp_empty_vertex = Gate(name = 'Skip', begin_time = i, day = day)
+      temp_empty_vertex = Gate(name = 'Skip', begin_time = i, day = self.day)
       self.vertices[i].append(temp_empty_vertex)
       # connect skipping vertex at current layer to that at next layer
       if i != 0:
@@ -55,12 +56,14 @@ class Graph():
         vertex.edge_dist_tt.append(5)
 
   def print(self):
+    print('Graph for ' + self.day)
     for lists in self.vertices:
-      print('[', end='')
+      print('Begin Time: ' + str(lists[0].begin_time) + '.\tTasks: [', end='')
       for gate in lists:
         if gate != lists[len(lists)-1]:
           print(gate.name, end = ', ')
         else:
           print(gate.name, end = '')
       print(']')
+    print('End Graph for ' + self.day)
 
