@@ -6,3 +6,5 @@
 #==========================================
 
 DAY = ['WKD', 'SAT', 'SUN']
+# radius of earth in miles
+R = 3961

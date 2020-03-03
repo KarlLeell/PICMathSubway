@@ -14,10 +14,10 @@ from subway_graph import Graph
 import constants
 
 
-def main(args):
+def read(path):
   print(args.file_loc)
-  sheet = pd.read_excel(args.file_loc)
-  station_loc = pd.read_csv(args.station_loc)
+  sheet = pd.read_excel(path[0])
+  station_loc = pd.read_csv(path[1])
   rows = len(sheet)
   wkd_graph = Graph(constants.DAY[0])
   sat_graph = Graph(constants.DAY[1])
@@ -71,11 +71,14 @@ def main(args):
   sun_graph.print()
   #wkd_graph.vertices[0][1].print()
 
+  return wkd_graph, sat_graph, sun_graph
+
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('-f', '--file_loc', default='NYCT FE Required Data/SFE SAMPLE210.xlsx', type=str)
   parser.add_argument('-s', '--station_loc', default='NYCT FE Required Data/station_location.csv', type=str)
   args = parser.parse_args()
-  main(args)
+  path = [args.file_loc, args.station_loc]
+  read(path)
   

@@ -21,7 +21,10 @@ class Station:
 
   # return the location
   def abs_loc(self):
-    return self.loc
+    if self.loc != []:
+      return self.loc
+    else:
+      return [0,0]
 
   # update station info
   def set_station(self, name = '', loc = [0,0], boro = '', routes = []):

@@ -50,7 +50,8 @@ class Graph():
         if prev_vertex.name == 'Skip':
           prev_vertex.edge_dist_tt.append(0)
         else:
-          prev_vertex.edge_dist_tt.append(5)
+          distance = prev_vertex.calc_edge_dist_tt(vertex)
+          prev_vertex.edge_dist_tt.append(distance)
         
     if time != 23:
       # connect this vertex and vertices on next layer
@@ -59,7 +60,8 @@ class Graph():
         if next_vertex.name == 'Skip':
           vertex.edge_dist_tt.append(0)
         else:
-          vertex.edge_dist_tt.append(5)
+          distance = vertex.calc_edge_dist_tt(next_vertex)
+          vertex.edge_dist_tt.append(distance)
 
   def print(self):
     print('Graph for ' + self.day)
