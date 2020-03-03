@@ -13,15 +13,25 @@ from gate import Gate
 from subway_graph import Graph
 import constants
 
-DAYTYPE = ['WKD', 'SAT', 'SUN']
 
 def main(args):
   print(args.file_loc)
   sheet = pd.read_excel(args.file_loc)
+  station_loc = pd.read_csv(args.station_loc)
   rows = len(sheet)
   wkd_graph = Graph(day = constants.DAY[0])
   sat_graph = Graph(day = constants.DAY[1])
   sun_graph = Graph(day = constants.DAY[2])
+  #location for stations
+  location_book = {}
+  # build a map for stations and locations
+  for i in range(len(station_loc)):
+    station = station_loc.loc[i, 'Stop Name']
+    latitude = station_loc.loc[i, 'GTFS Latitude']
+    longitude = station_loc.loc[i, 'GTFS Longitude']
+    location_book[station] = [latitude, longitude]
+
+
 
   for i in range(0, rows):
     gate_id = sheet.values[i, 1]
@@ -39,24 +49,32 @@ def main(args):
     # mark the matrix
     for i in range(begin_entry, begin_entry+12):
       task_matrix[i, 0] = 1
+    # get location of a station
+    loc = location_book.get(name)
+    if not loc:
+      loc = []
 
-    task = Gate(name = name, boro = boro, routes = routes, gate_id = gate_id, begin_time = begin_time,
+    task = Gate(name = name, boro = boro, loc = loc, routes = routes, gate_id = gate_id, begin_time = begin_time,
                 task_matrix = task_matrix, day = day, comments = comments)
 
     # adding vertex to graph
-    if task.day == DAYTYPE[0]:
+    if task.day == constants.DAY[0]:
       wkd_graph.add_vertex(task)
-    elif task.day == DAYTYPE[1]:
+    elif task.day == constants.DAY[1]:
       sat_graph.add_vertex(task)
-    elif task.day == DAYTYPE[2]:
+    elif task.day == constants.DAY[2]:
       sun_graph.add_vertex(task)
 
   # print and see the graphs
+  wkd_graph.print()
   sat_graph.print()
+  sun_graph.print()
 
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
-  parser.add_argument('file_loc', type = str, default = 'NYCT FE Required Data/List of Stations and FCAs.xlsx')
+  parser.add_argument('-f', '--file_loc', default='NYCT FE Required Data/SFE SAMPLE210.xlsx', type=str)
+  parser.add_argument('-s', '--station_loc', default='NYCT FE Required Data/station_location.csv', type=str)
   args = parser.parse_args()
   main(args)
+  
