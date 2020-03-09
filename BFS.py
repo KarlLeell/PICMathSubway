@@ -105,6 +105,7 @@ def MakeMove(root, params):
         break
       ExpandNode(leaf, params)
       Backpropagate(leaf, root)
+      print('Root value after backprop '+str(root.value))
     if root.children == []:
       ExpandNode(root, params)
       print("doesn't enter loop")
