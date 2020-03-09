@@ -13,26 +13,29 @@ class Params:
     self.sigma = sigma
 
 class Gate:
-  def __init__(self, name = '', begin_time = 0, neighbors = [], edge_dist_tt = [], empty = False):
+  def __init__(self, name = '', begin_time = 0, 
+            neighbors = [], edge_dist_tt = [], 
+            empty = False, v=0, t=False):
     # self attributes
     self.name = name;
     self.begin_time = begin_time
     self.neighbors = neighbors
     self.edge_dist_tt = edge_dist_tt
     self.empty = empty
+    self.value = v
+    self.terminate = t
 
 class Node(Gate):
   def __init__(self, gate):
     self.gate = gate
-    self.value = None
     self.parent = None
     self.children = []
-  # def heuristic_value_function(self):
-  #   return random.random();
+    self.value = self.gate.value
+    self.terminate = self.gate.terminate
+  def heuristic_value_function(self):
+    pass
   def remove_child(self, n):
     pass
-  def set_value(self, v):
-    self.value = v
 
 def Lapse(probability):
   ''' return true with a certain probability '''
@@ -50,16 +53,11 @@ def RandomMove(node, params):
 def InitializeChildren(node, params):
   print("Add children to node "+str(node.gate.name))
   for i in range(len(node.gate.neighbors)):
-    # if(node.gate.neighbors[i].empty):
-    #   child = Node(node.gate.neighbors[i])
-    #   child.parent = node
-    #   node.children.append(child)
-    #   print("\tadd empty child "+str(child.gate.name))
     if (node.gate.neighbors[i].begin_time - node.gate.edge_dist_tt[i] >= node.gate.begin_time + 1):
       child = Node(node.gate.neighbors[i])
       child.parent = node
       node.children.append(child)
-      print("\tadd nonempty child "+str(child.gate.name))
+      print("\tadd nonempty child "+str(child.gate.name) +"\tvalue "+str(child.value))
   return node.children
 
 def SelectNode(root):
@@ -101,11 +99,16 @@ def MakeMove(root, params):
     while not Stop(params.stopping_probability):
       print("enter loop")
       leaf = SelectNode(root)
+      print('Select Node '+str(leaf.gate.name))
+      if leaf.terminate:
+        print("terminal node encountered, break")
+        break
       ExpandNode(leaf, params)
       Backpropagate(leaf, root)
     if root.children == []:
       ExpandNode(root, params)
       print("doesn't enter loop")
+  print("make decision")
   return ArgmaxChild(root)
 
 
@@ -130,8 +133,19 @@ if __name__ == '__main__':
   gate7 = Gate('empty7', 4, [], [], True)
   gate8 = Gate('gate8', 4, [], [])
 
-  gate9 = Gate('empty9', 5, [], [], True)
-  gate10 = Gate('gate10', 5, [], [])
+  gate9 = Gate('empty9', 5, [], [], True, t=True)
+  gate10 = Gate('gate10', 5, [], [], t=True)
+
+  gate1.value = 1
+  gate2.value = 2
+  gate3.value = 3
+  gate4.value = 4
+  gate5.value = 5
+  gate6.value = 6
+  gate7.value = 7
+  gate8.value = 8
+  gate9.value = 9
+  gate10.value = 10
 
   gate1.neighbors = [gate2,gate3]
   gate2.neighbors = [gate4,gate5,gate6]
@@ -162,22 +176,8 @@ if __name__ == '__main__':
   node9 = Node(gate9)
   node10 = Node(gate10)
 
-  node1.value = 1
-  node2.value = 2
-  node3.value = 3
-  node4.value = 4
-  node5.value = 5
-  node6.value = 6
-  node7.value = 7
-  node8.value = 8
-  node9.value = 9
-  node10.value = 10
-
-  print("node2.value " +str(node2.value))
-
 
   print("decision: "+str(MakeMove(node1, params).gate.name))
-  # print_moves(node1)
 
 
 
