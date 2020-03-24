@@ -6,8 +6,8 @@ import constants
 
 
 def read(path):
-  print(args.file_loc)
-  sheet = pd.read_excel(args.file_loc)
+  # print(args.file_loc)
+  sheet = pd.read_excel(path)
   rows = 31
   checkers = []
   for i in range(0, rows):
