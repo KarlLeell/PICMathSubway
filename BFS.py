@@ -1,7 +1,10 @@
 import random, os, sys, time
 import numpy as np
 from operator import attrgetter
+import argparse
 from gate import Gate
+import read_tasks as read_tasks
+import read_checkers as read_checkers
 
 class Params:
   def __init__(self, weights=[], sp=0.10, lapse_rate=0.05, pruning_threshold=0.0, mu=0.0, sigma=1.0):
@@ -12,26 +15,13 @@ class Params:
     self.mu = mu
     self.sigma = sigma
 
-class Gate:
-  def __init__(self, name = '', begin_time = 0, 
-            neighbors = [], edge_dist_tt = [], 
-            empty = False, v=0, t=False):
-    # self attributes
-    self.name = name;
-    self.begin_time = begin_time
-    self.neighbors = neighbors
-    self.edge_dist_tt = edge_dist_tt
-    self.empty = empty
-    self.value = v
-    self.terminate = t
-
 class Node(Gate):
   def __init__(self, gate):
     self.gate = gate
     self.parent = None
     self.children = []
     self.value = self.gate.value
-    self.terminate = self.gate.terminate
+    self.terminate = self.gate.finished
   def heuristic_value_function(self):
     pass
   def remove_child(self, n):
@@ -122,73 +112,27 @@ def print_moves(root):
 if __name__ == '__main__':
   params = Params()
 
-  gate1 = Gate('gate1', 1, [], [])
+  parser = argparse.ArgumentParser()
+  parser.add_argument('-f', '--file_loc', default='NYCT FE Required Data/SFE SAMPLE210.xlsx', type=str)
+  parser.add_argument('-s', '--station_loc', default='NYCT FE Required Data/station_location.csv', type=str)
+  args = parser.parse_args()
+  path = [args.file_loc, args.station_loc]
+  graphs = read_tasks.read(path)
 
-  gate2 = Gate('empty2', 2, [], [], True)
-  gate3 = Gate('gate3', 2, [], [])
+  checker_path = 'NYCT FE Required Data/FE_Checker list.xlsx'
+  checkers = read_checkers.read(checker_path)
 
-  gate4 = Gate('empty4', 3, [], [], True)
-  gate5 = Gate('gate5', 3, [], [])
-  gate6 = Gate('gate6', 3, [], [])
+  # only working with weekday tasks
+  gates = graphs[0]
 
-  gate7 = Gate('empty7', 4, [], [], True)
-  gate8 = Gate('gate8', 4, [], [])
+  gates.print()
+  for checker in checkers:
+    checker.print()
 
-  gate9 = Gate('empty9', 5, [], [], True, t=True)
-  gate10 = Gate('gate10', 5, [], [], t=True)
+  current_checker = checkers[0]
+  start_time = int(current_checker.shift_start/100)
 
-  gate1.value = 1
-  gate2.value = 2
-  gate3.value = 3
-  gate4.value = 4
-  gate5.value = 5
-  gate6.value = 6
-  gate7.value = 7
-  gate8.value = 8
-  gate9.value = 9
-  gate10.value = 10
+  root = Node(gates.vertices[start_time][1])
+  print("root: " + root.gate.name)
 
-  gate1.neighbors = [gate2,gate3]
-  gate2.neighbors = [gate4,gate5,gate6]
-  gate3.neighbors = [gate4,gate5,gate6]
-  gate4.neighbors = [gate7,gate8]
-  gate5.neighbors = [gate7,gate8]
-  gate6.neighbors = [gate7,gate8]
-  gate7.neighbors = [gate9,gate10]
-  gate8.neighbors = [gate9,gate10]
-
-  gate1.edge_dist_tt = [0,.084]
-  gate2.edge_dist_tt = [0,0,0]
-  gate3.edge_dist_tt = [0,.084,.084]
-  gate4.edge_dist_tt = [0,0]
-  gate5.edge_dist_tt = [0,.084]
-  gate6.edge_dist_tt = [0,.084]
-  gate7.edge_dist_tt = [0,0]
-  gate8.edge_dist_tt = [0,.084]
-
-  node1 = Node(gate1)
-  node2 = Node(gate2)
-  node3 = Node(gate3)
-  node4 = Node(gate4)
-  node5 = Node(gate5)
-  node6 = Node(gate6)
-  node7 = Node(gate7)
-  node8 = Node(gate8)
-  node9 = Node(gate9)
-  node10 = Node(gate10)
-
-
-  print("decision: "+str(MakeMove(node1, params).gate.name))
-
-
-
-
-
-
-
-
-
-
-
-
-
+  print("decision: "+str(MakeMove(root, params).gate.name))

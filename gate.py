@@ -20,7 +20,7 @@ class Gate(Station):
 
 
   def __init__(self, name = '', loc = None, boro = '', routes = None, gate_id = '', begin_time = 0,
-                task_matrix = np.zeros((24*12, 1)), day = '', neighbors = None, edge_dist_tt = None, comments = ''):
+                task_matrix = np.zeros((24*12, 1)), day = '', neighbors = None, edge_dist_tt = None, comments = '', value = 0):
     # inherited attribute
     #self.name_ = name
     #self.loc_ = loc
@@ -36,6 +36,7 @@ class Gate(Station):
     self.edge_dist_tt = edge_dist_tt if edge_dist_tt is not None else []
     self.comments = comments
     self.finished = False
+    self.value = value
 
 
   # def abs_loc(self):
