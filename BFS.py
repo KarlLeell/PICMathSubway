@@ -125,8 +125,9 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('-f', '--file_loc', default='NYCT FE Required Data/SFE SAMPLE210.xlsx', type=str)
   parser.add_argument('-s', '--station_loc', default='NYCT FE Required Data/station_location.csv', type=str)
+  parser.add_argument('-i', '--station_id', default='NYCT FE Required Data/List of Stations and FCAs_v2.xlsx', type=str)
   args = parser.parse_args()
-  path = [args.file_loc, args.station_loc]
+  path = [args.file_loc, args.station_loc, args.station_id]
   graphs = read_tasks.read(path)
 
   checker_path = 'NYCT FE Required Data/FE_Checker list.xlsx'
