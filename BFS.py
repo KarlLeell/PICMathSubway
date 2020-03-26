@@ -7,13 +7,14 @@ import read_tasks as read_tasks
 import read_checkers as read_checkers
 
 class Params:
-  def __init__(self, weights=[], sp=0.10, lapse_rate=0.05, pruning_threshold=0.0, mu=0.0, sigma=1.0):
+  def __init__(self, checker_shift_end, weights=[], sp=0.10, lapse_rate=0.05, pruning_threshold=0.0, mu=0.0, sigma=1.0):
     self.weights = weights
     self.stopping_probability = sp
     self.lapse_rate = lapse_rate
     self.pruning_threshold = pruning_threshold
     self.mu = mu
     self.sigma = sigma
+    self.checker_shift_end = checker_shift_end
 
 class Node(Gate):
   def __init__(self, gate):
@@ -21,7 +22,7 @@ class Node(Gate):
     self.parent = None
     self.children = []
     self.value = self.gate.value
-    self.terminate = self.gate.finished
+    self.terminate = False
   def heuristic_value_function(self):
     pass
   def remove_child(self, n):
@@ -42,13 +43,24 @@ def RandomMove(node, params):
 
 def InitializeChildren(node, params):
   print("Add children to node "+str(node.gate.name))
-  for i in range(len(node.gate.neighbors)):
+  for i in range(1,len(node.gate.neighbors)):
     if (node.gate.neighbors[i].begin_time - node.gate.edge_dist_tt[i] >= node.gate.begin_time + 1):
-      child = Node(node.gate.neighbors[i])
-      child.parent = node
-      node.children.append(child)
-      print("\tadd nonempty child "+str(child.gate.name) +"\tvalue "+str(child.value))
+      node.gate.neighbors[i].print()
+      if(CheckLicDist(node.gate.neighbors[i], params)):
+        child = Node(node.gate.neighbors[i])
+        child.parent = node
+        node.children.append(child)
+        print("\tadd nonempty child "+str(child.gate.name) +"\tvalue "+str(child.value))
+  if(CheckLicDist(node.gate, params, 1) == False):
+    node.children.clear()
+    node.terminate = True
+
   return node.children
+
+def CheckLicDist(gate, params, extra_time = 0):
+  print("Inside CheckLicDist: " + gate.name + " edge dist: " +  str(gate.edge_dist_tt[0]*0.001))
+  return params.checker_shift_end - (gate.begin_time + 1 + extra_time + gate.edge_dist_tt[0]*0.001) >= 0 
+
 
 def SelectNode(root):
   ''' return the leaf node along the most promising branch '''
@@ -110,7 +122,6 @@ def print_moves(root):
 
 # def main(args):
 if __name__ == '__main__':
-  params = Params()
 
   parser = argparse.ArgumentParser()
   parser.add_argument('-f', '--file_loc', default='NYCT FE Required Data/SFE SAMPLE210.xlsx', type=str)
@@ -130,9 +141,11 @@ if __name__ == '__main__':
     checker.print()
 
   current_checker = checkers[0]
-  start_time = int(current_checker.shift_start/100)
+  start_time = current_checker.shift_start
 
-  root = Node(gates.vertices[start_time][1])
+  params = Params(current_checker.shift_end, weights=[], sp=0.10, lapse_rate=0.05, pruning_threshold=0.0, mu=0.0, sigma=1.0)
+
+  root = Node(gates.vertices[start_time][2])
   print("root: " + root.gate.name)
 
   print("decision: "+str(MakeMove(root, params).gate.name))
