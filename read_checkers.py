@@ -12,7 +12,9 @@ def read(path):
   checkers = []
   for i in range(0, rows):
     name = str(sheet.values[i, 0])
+
     shift_start = int(sheet.values[i, 2]/100)
+
     if(sheet.values[i, 4] == 'Full Time'):
       ft_work_status = True
       shift_end = shift_start + 7

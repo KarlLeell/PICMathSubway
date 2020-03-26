@@ -15,7 +15,7 @@ class Params:
     self.mu = mu
     self.sigma = sigma
     self.checker_shift_end = checker_shift_end
-
+  
 class Node(Gate):
   def __init__(self, gate):
     self.gate = gate
@@ -60,7 +60,6 @@ def InitializeChildren(node, params):
 def CheckLicDist(gate, params, extra_time = 0):
   print("Inside CheckLicDist: " + gate.name + " edge dist: " +  str(gate.edge_dist_tt[0]*0.001))
   return params.checker_shift_end - (gate.begin_time + 1 + extra_time + gate.edge_dist_tt[0]*0.001) >= 0 
-
 
 def SelectNode(root):
   ''' return the leaf node along the most promising branch '''
@@ -141,6 +140,7 @@ if __name__ == '__main__':
     checker.print()
 
   current_checker = checkers[0]
+
   start_time = current_checker.shift_start
 
   params = Params(current_checker.shift_end, weights=[], sp=0.10, lapse_rate=0.05, pruning_threshold=0.0, mu=0.0, sigma=1.0)
