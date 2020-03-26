@@ -27,6 +27,7 @@ def read(path):
   sun_graph = Graph(constants.DAY[2])
   #location for stations
   location_book = {}
+
   station_id_book = {}
   # build a map for stations and locations
   for i in range(len(station_loc)):
@@ -41,8 +42,6 @@ def read(path):
     station_id = station_id.split(',')[0]
     if not station_id_book.get(station_loc_id):
       station_id_book[station_loc_id]=station_id
-
-
 
   for i in range(rows):
     gate_id = sheet.values[i, 1]
@@ -82,9 +81,10 @@ def read(path):
       sun_graph.add_vertex(task)
 
   #print and see the graphs
-  #wkd_graph.print()
-  #sat_graph.print()
-  #sun_graph.print()
+  
+  # wkd_graph.print()
+  # sat_graph.print()
+  # sun_graph.print()
   #wkd_graph.vertices[0][1].print()
 
   return wkd_graph, sat_graph, sun_graph

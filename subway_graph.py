@@ -15,11 +15,16 @@ class Graph():
   def __init__(self, day = constants.DAY[0]):
     self.day = day
     self.empty_vertex = Gate(name = 'Skip', begin_time = 0, day = self.day)
+    self.lic_vertex = Gate(name = 'LIC', begin_time = 0, day = self.day)
+
     # list of lists of tasks at all 24 hours
     self.vertices = []
     for i in range(24):
       self.vertices.append([])
       temp_empty_vertex = Gate(name = 'Skip', begin_time = i, day = self.day)
+      lic_empty_vertex = Gate(name = 'LIC', begin_time = i, day = self.day)
+      self.vertices[i].append(lic_empty_vertex)
+
       self.vertices[i].append(temp_empty_vertex)
       # connect skipping vertex at current layer to that at next layer
       if i != 0:
