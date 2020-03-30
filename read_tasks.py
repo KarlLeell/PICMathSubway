@@ -60,7 +60,7 @@ def read(path):
     begin_entry = 12 * begin_time
     comments = sheet.values[i, 10]
     available_checkers = 0
-    for j in range(21, checker_rows):
+    for j in range(19, checker_rows):   #bottom 12 checkers are assigned to subway (starting from row 21)
       if day == 'WKD':
         if ((int(checker_schedule.values[j,3])) - 100) >= begin_time:
           if (int(checker_schedule.values[j,2])) <= begin_time:
