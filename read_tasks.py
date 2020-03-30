@@ -24,7 +24,7 @@ def read(path):
   station_ls = pd.read_excel(path[2])
   checker_schedule = pd.read_excel(path[3])
   rows = len(sheet)
-  checker_rows = 10 #checkers available for subway; will need to modify to select specific checkers
+  checker_rows = len(checker_schedule) #checkers available for subway; will need to modify to select specific checkers
   wkd_graph = Graph(constants.DAY[0])
   sat_graph = Graph(constants.DAY[1])
   sun_graph = Graph(constants.DAY[2])
@@ -60,7 +60,7 @@ def read(path):
     begin_entry = 12 * begin_time
     comments = sheet.values[i, 10]
     available_checkers = 0
-    for j in range(0, checker_rows):
+    for j in range(21, checker_rows):
       if day == 'WKD':
         if ((int(checker_schedule.values[j,3])) - 100) >= begin_time:
           if (int(checker_schedule.values[j,2])) <= begin_time:
@@ -121,7 +121,7 @@ if __name__ == '__main__':
   parser.add_argument('-f', '--file_loc', default='NYCT FE Required Data/SFE SAMPLE210.xlsx', type=str)
   parser.add_argument('-s', '--station_loc', default='NYCT FE Required Data/station_location.csv', type=str)
   parser.add_argument('-i', '--station_id', default='NYCT FE Required Data/List of Stations and FCAs_v2.xlsx', type=str)
-  parser.add_argument('-c', '--checker_schedule', default='NYCT FE Required Data/FE Checker List.xlsx', type=str)
+  parser.add_argument('-c', '--checker_schedule', default='NYCT FE Required Data/FE Checker List ASSIGNED.xlsx', type=str)
   args = parser.parse_args()
   path = [args.file_loc, args.station_loc, args.station_id, args.checker_schedule]
   read(path)
