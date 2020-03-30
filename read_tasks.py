@@ -102,12 +102,16 @@ def read(path):
     elif task.day == constants.DAY[2]:
       sun_graph.add_vertex(task)
 
-  #print and see the graphs
-  
+  # normalize distance priority
+  wkd_graph.normalize_distance_priority()
+  sat_graph.normalize_distance_priority()
+  sun_graph.normalize_distance_priority()
+
+  #print and see the graphs 
   # wkd_graph.print()
   # sat_graph.print()
   # sun_graph.print()
-  #wkd_graph.vertices[0][1].print()
+  #wkd_graph.vertices[0][2].print()
 
   return wkd_graph, sat_graph, sun_graph
 
