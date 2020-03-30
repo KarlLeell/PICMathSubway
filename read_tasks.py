@@ -21,7 +21,9 @@ def read(path):
   sheet = pd.read_excel(path[0])
   station_loc = pd.read_csv(path[1])
   station_ls = pd.read_excel(path[2])
+  checker_schedule = pd.read_excel(path[3])
   rows = len(sheet)
+  checker_rows = 10 #checkers available for subway; will need to modify to select specific checkers
   wkd_graph = Graph(constants.DAY[0])
   sat_graph = Graph(constants.DAY[1])
   sun_graph = Graph(constants.DAY[2])
@@ -114,6 +116,7 @@ if __name__ == '__main__':
   parser.add_argument('-f', '--file_loc', default='NYCT FE Required Data/SFE SAMPLE210.xlsx', type=str)
   parser.add_argument('-s', '--station_loc', default='NYCT FE Required Data/station_location.csv', type=str)
   parser.add_argument('-i', '--station_id', default='NYCT FE Required Data/List of Stations and FCAs_v2.xlsx', type=str)
+  parser.add_argument('-c', '--checker_schedule', default='NYCT FE Required Data/FE Checker List.xlsx', type=str)
   args = parser.parse_args()
   path = [args.file_loc, args.station_loc, args.station_id]
   read(path)
