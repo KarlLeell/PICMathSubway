@@ -9,23 +9,30 @@ import numpy as np
 from gate import Gate
 import constants
 import copy as cp
+from scipy import stats
 
 class Graph():
 
   def __init__(self, day = constants.DAY[0]):
     self.day = day
-    self.empty_vertex = Gate(name = 'Skip', begin_time = 0, day = self.day)
-    self.lic_vertex = Gate(name = 'LIC', begin_time = 0, day = self.day)
+    self.empty_vertex = Gate(name = 'Root', begin_time = 0, day = self.day)
+    #self.lic_vertex = Gate(name = 'LIC', begin_time = 0, day = self.day)
 
     # list of lists of tasks at all 24 hours
     self.vertices = []
     for i in range(24):
       self.vertices.append([])
-      temp_empty_vertex = Gate(name = 'Skip', begin_time = i, day = self.day)
+      skip_empty_vertexM = Gate(name = 'SkipM', begin_time = i, boro = 'M', day = self.day)
+      skip_empty_vertexQ = Gate(name = 'SkipQ', begin_time = i, boro = 'Q', day = self.day)
+      skip_empty_vertexBK = Gate(name = 'SkipBK', begin_time = i, boro = 'BK', day = self.day)
+      skip_empty_vertexBX = Gate(name = 'SkipBX', begin_time = i, boro = 'BX', day = self.day)
       lic_empty_vertex = Gate(name = 'LIC', begin_time = i, day = self.day)
       self.vertices[i].append(lic_empty_vertex)
+      self.vertices[i].append(skip_empty_vertexM)
+      self.vertices[i].append(skip_empty_vertexQ)
+      self.vertices[i].append(skip_empty_vertexBK)
+      self.vertices[i].append(skip_empty_vertexBX)
 
-      self.vertices[i].append(temp_empty_vertex)
       # connect skipping vertex at current layer to that at next layer
       if i != 0:
         self.vertices[i-1][0].neighbors.append(temp_empty_vertex)
@@ -67,6 +74,41 @@ class Graph():
         else:
           distance = vertex.calc_edge_dist_tt(next_vertex)
           vertex.edge_dist_tt.append(distance)
+
+  def normalize_distance_priority(self):
+    list_of_all_distances = []
+    number_of_elements = []
+    q = []
+    q_next = []
+    q.append(self.empty_vertex)
+    while len(q) != 0:
+      for vertex in q:
+        #print('Calc for ' + vertex.name)
+        list_of_all_distances.extend(vertex.edge_dist_tt)
+        number_of_elements.append(len(vertex.edge_dist_tt))
+        if q_next == []:
+          q_next.extend(vertex.neighbors)
+      q = q_next[::]
+      q_next = []
+    normalized_prio = stats.zscore(list_of_all_distances).tolist()
+    #print('Done calc')
+    index = 0
+    current = 0
+    q = []
+    q_next = []
+    q.append(self.empty_vertex)
+    while len(q) != 0:
+      for vertex in q:
+        #print('Recover for ' + vertex.name)
+        vertex.dist_prio.extend(normalized_prio[current:current+number_of_elements[index]])
+        if q_next == []:
+          q_next.extend(vertex.neighbors)
+        current = current + number_of_elements[index]
+        index = index + 1
+      q = q_next[::]
+      q_next = []
+    #print('Done recover')
+
 
   def print(self):
     print('Graph for ' + self.day)
