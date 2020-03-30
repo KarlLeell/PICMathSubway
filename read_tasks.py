@@ -123,6 +123,6 @@ if __name__ == '__main__':
   parser.add_argument('-i', '--station_id', default='NYCT FE Required Data/List of Stations and FCAs_v2.xlsx', type=str)
   parser.add_argument('-c', '--checker_schedule', default='NYCT FE Required Data/FE Checker List.xlsx', type=str)
   args = parser.parse_args()
-  path = [args.file_loc, args.station_loc, args.station_id]
+  path = [args.file_loc, args.station_loc, args.station_id, args.checker_schedule]
   read(path)
   
