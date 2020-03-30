@@ -3,7 +3,6 @@
 # Author: NYUPICMathSubwayGroup
 # Date:   2020.02.24
 # Comment:Need pandas to run this test
-#==========================================
 
 import pandas as pd
 import argparse
@@ -14,16 +13,19 @@ def main(args):
   sheet = station_file = pd.read_excel(args.file_loc)
   rows = len(sheet)
   stations = []
-  for i in range(1, rows):
-    # the location in file is actually the entry i think
-    name = sheet.values[i, 4]
-    boro = sheet.values[i, 5]
-    routes_str = sheet.values[i, 6]
-    routes = [routes_str[i] for i in range(len(routes_str))]
-    station = Station(name = name, boro = boro, routes = routes)
-    stations.append(station)
-  print(len(stations))
-  stations[0].print()
+    for i in range(0, rows):
+      # the location in file is actually the entry i think
+      name = sheet.values[i, 8]
+      boro = sheet.values[i, 6]
+      routes = str(sheet.values[i, 7]).split(",")
+      station = Station(name = name, boro = boro, routes = routes)    
+      stations.append(station)              
+ 
+    for n in range(0,len(stations)):
+      stations[n].print()
+      print()
+
+    print('Number of stations:',len(stations))
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()

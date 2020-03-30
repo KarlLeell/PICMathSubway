@@ -27,6 +27,7 @@ class Graph():
       skip_empty_vertexBK = Gate(name = 'SkipBK', begin_time = i, boro = 'BK', day = self.day)
       skip_empty_vertexBX = Gate(name = 'SkipBX', begin_time = i, boro = 'BX', day = self.day)
       lic_empty_vertex = Gate(name = 'LIC', begin_time = i, day = self.day, loc = [40.733997064, -73.935996256])
+
       self.vertices[i].append(lic_empty_vertex)
       self.vertices[i].append(skip_empty_vertexM)
       self.vertices[i].append(skip_empty_vertexQ)
