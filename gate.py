@@ -1,8 +1,7 @@
 #==========================================
 # Title:  Gate Class
 # Author: NYUPICMathSubwayGroup
-# Date:   2020.03.02
-# Comment:
+# Date:   2020.03.23
 #==========================================
 
 import numpy as np
@@ -20,7 +19,7 @@ class Gate(Station):
 
 
   def __init__(self, name = '', loc = None, boro = '', routes = None, gate_id = '', begin_time = 0,
-                task_matrix = np.zeros((24*12, 1)), day = '', neighbors = None, edge_dist_tt = None, comments = '', value = 0):
+                task_matrix = np.zeros((24*12, 1)), day = '', neighbors = None, edge_dist_tt = None, comments = '', availability_priority = None):
     # inherited attribute
     #self.name_ = name
     #self.loc_ = loc
@@ -35,8 +34,10 @@ class Gate(Station):
     self.neighbors = neighbors if neighbors is not None else []
     self.edge_dist_tt = edge_dist_tt if edge_dist_tt is not None else []
     self.comments = comments
+    self.availability_priority = availability_priority
     self.finished = False
     self.value = value
+
 
 
   # def abs_loc(self):
@@ -60,3 +61,4 @@ class Gate(Station):
     print('Neighbors: ', end='')
     print(self.neighbors)
     print('Distance: ' + str(self.edge_dist_tt))
+    print('Availability Priority: ' + str(self.availability_priority))
