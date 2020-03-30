@@ -56,6 +56,25 @@ def read(path):
     task_matrix = np.zeros((24*12, 1))
     begin_entry = 12 * begin_time
     comments = sheet.values[i, 10]
+    available_checkers = 0
+    for j in range(0, checker_rows):
+      if day == 'WKD':
+        if ((int(checker_schedule.values[j,3])) - 100) >= begin_time:
+          if (int(checker_schedule.values[j,2])) <= begin_time:
+            available_checkers += 1
+      elif day == 'SAT' and checker_schedule.values[j,5] == 'SUN - MON':
+        if ((int(checker_schedule.values[j,3])) - 100) >= begin_time:
+          if (int(checker_schedule.values[j,2])) <= begin_time:
+            available_checkers += 1
+      elif day == 'SUN' and checker_schedule.values[j,5] == 'FRI - SAT':
+        if ((int(checker_schedule.values[j,3])) - 100) >= begin_time:
+          if (int(checker_schedule.values[j,2])) <= begin_time:
+            available_checkers += 1
+        
+    if available_checkers == 0:
+      availability_priority = 1
+    else:
+      availability_priority = 1/available_checkers
     # mark the matrix
     for i in range(begin_entry, begin_entry+12):
       task_matrix[i, 0] = 1
@@ -70,7 +89,7 @@ def read(path):
       print('Location for ' + name + ' not found.')
 
     task = Gate(name = name, boro = boro, loc = loc, routes = routes, gate_id = gate_id, begin_time = begin_time,
-                task_matrix = task_matrix, day = day, comments = comments)
+                task_matrix = task_matrix, day = day, comments = comments, availability_priority = availability_priority)
 
     # adding vertex to graph
     if task.day == constants.DAY[0]:
