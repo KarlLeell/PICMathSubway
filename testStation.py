@@ -2,12 +2,11 @@
 # Title:  Test Station Class
 # Author: NYUPICMathSubwayGroup
 # Date:   2020.02.24
-# Need pandas to run this test
-#==========================================
+# Comment:Need pandas to run this test
 
 import pandas as pd
 import argparse
-from Station import Station
+from station import Station
 
 def main(args):
   print(args.file_loc)
@@ -30,6 +29,6 @@ def main(args):
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
-  parser.add_argument('file_loc', type = str, default = 'NYCT FE Required Data/List of Stations and FCAs')
+  parser.add_argument('file_loc', type = str, default = 'NYCT FE Required Data/List of Stations and FCAs.xlsx')
   args = parser.parse_args()
   main(args)

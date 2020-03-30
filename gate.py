@@ -2,7 +2,6 @@
 # Title:  Gate Class
 # Author: NYUPICMathSubwayGroup
 # Date:   2020.03.23
-# Comment:
 #==========================================
 
 import numpy as np
@@ -37,6 +36,8 @@ class Gate(Station):
     self.comments = comments
     self.availability_priority = availability_priority
     self.finished = False
+    self.value = value
+
 
 
   # def abs_loc(self):
