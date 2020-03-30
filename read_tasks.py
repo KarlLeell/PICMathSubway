@@ -18,6 +18,7 @@ def read(path):
   print('Reading tasks: '+ path[0])
   print('Station locations reference: '+ path[1])
   print('Station loc id reference: '+ path[2])
+  print('Checker list: '+ path[3])
   sheet = pd.read_excel(path[0])
   station_loc = pd.read_csv(path[1])
   station_ls = pd.read_excel(path[2])
