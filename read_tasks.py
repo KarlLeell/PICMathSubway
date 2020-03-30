@@ -88,7 +88,7 @@ def read(path):
   #print and see the graphs 
   # wkd_graph.print()
   # sat_graph.print()
-  sun_graph.print()
+  # sun_graph.print()
   #wkd_graph.vertices[0][2].print()
 
   return wkd_graph, sat_graph, sun_graph
