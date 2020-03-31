@@ -26,7 +26,8 @@ class Graph():
       skip_empty_vertexQ = Gate(name = 'SkipQ', begin_time = i, boro = 'Q', day = self.day)
       skip_empty_vertexBK = Gate(name = 'SkipBK', begin_time = i, boro = 'BK', day = self.day)
       skip_empty_vertexBX = Gate(name = 'SkipBX', begin_time = i, boro = 'BX', day = self.day)
-      lic_empty_vertex = Gate(name = 'LIC', begin_time = i, day = self.day, loc = [40.733997064, -73.935996256])
+      lic_empty_vertex = Gate(name = 'LIC', begin_time = i, day = self.day,
+                              loc = [constants.LIC_LATITUDE, constants.LIC_LONGITUDE])
 
       self.vertices[i].append(lic_empty_vertex)
       self.vertices[i].append(skip_empty_vertexM)
@@ -46,9 +47,12 @@ class Graph():
         self.vertices[i-1][3].neighbors.append(skip_empty_vertexBK)
         self.vertices[i-1][4].neighbors.append(skip_empty_vertexBX)
         for j in range(5):
+          self.vertices[i-1][0].edge_dist_tt.append(0)
+          self.vertices[i-1][0].dist_prio.append(0)
+        for j in range(4):
           # distance between skipping vertices connecting each other is 0
-          self.vertices[i-1][j].edge_dist_tt.append(0)
-          self.vertices[i-1][j].dist_prio.append(0)
+          self.vertices[i-1][j+1].edge_dist_tt.append(0)
+          self.vertices[i-1][j+1].dist_prio.append(0)
       # connect starting empty vertices with skipping vertex at the first layer
       else:
         self.empty_vertex.neighbors.append(lic_empty_vertex) 

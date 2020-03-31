@@ -24,7 +24,7 @@ class Gate(Station):
 
   def __init__(self, name = '', loc = None, boro = '', routes = None, gate_id = '', begin_time = 0,
                 task_matrix = np.zeros((24*12, 1)), day = '', neighbors = None, edge_dist_tt = None, dist_prio = None,
-                comments = '', value = 0, availability_priority = 0):
+                comments = '', dummy_value = 0, availability_priority = 0):
 
     # inherited attribute
     #self.name_ = name
@@ -43,7 +43,7 @@ class Gate(Station):
     self.comments = comments
     self.availability_priority = availability_priority
     self.finished = False
-    self.value = value
+    self.dummy_value = dummy_value
 
 
 
