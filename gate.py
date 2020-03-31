@@ -1,15 +1,22 @@
 #==========================================
 # Title:  Gate Class
 # Author: NYUPICMathSubwayGroup
+<<<<<<< HEAD
 # Date:   2020.03.02
 # Comment:
+=======
+# Date:   2020.03.23
+>>>>>>> master
 #==========================================
 
 import numpy as np
 from station import Station
 import math
 import constants
+<<<<<<< HEAD
 import subprocess
+=======
+>>>>>>> master
 
 class Gate(Station):
 
@@ -21,7 +28,9 @@ class Gate(Station):
 
 
   def __init__(self, name = '', loc = None, boro = '', routes = None, gate_id = '', begin_time = 0,
-                task_matrix = np.zeros((24*12, 1)), day = '', neighbors = None, edge_dist_tt = None, comments = ''):
+                task_matrix = np.zeros((24*12, 1)), day = '', neighbors = None, edge_dist_tt = None, dist_prio = None,
+                comments = '', value = 0, availability_priority = 0):
+
     # inherited attribute
     #self.name_ = name
     #self.loc_ = loc
@@ -35,8 +44,12 @@ class Gate(Station):
     self.day = day
     self.neighbors = neighbors if neighbors is not None else []
     self.edge_dist_tt = edge_dist_tt if edge_dist_tt is not None else []
+    self.dist_prio = dist_prio if dist_prio is not None else []
     self.comments = comments
+    self.availability_priority = availability_priority
     self.finished = False
+    self.value = value
+
 
 
   # def abs_loc(self):
@@ -44,7 +57,11 @@ class Gate(Station):
   def find_neighbors(self):
     return self.neighbors
 
-  def calc_edge_dist_tt(self, dst_gate):
+  def calc_travel_time(self, dst_gate):
+    # if the same location return 0
+    if self.loc == dst_gate.loc:
+      return 0
+
     str1 = """ 'http://localhost:8080/otp/routers/default/plan?fromPlace="""
     str2 = """&toPlace="""
     str3 = """&time=1:02pm&date=3-18-2020&mode=TRANSIT,WALK&maxWalkDistance=500&arriveBy=false'"""
@@ -62,15 +79,17 @@ class Gate(Station):
         check = value.split('"')
         distance = int(check[-1])
         break
-        return distance
-    #sta_loc = self.abs_loc()
-    #dst_loc = dst_gate.abs_loc()
-    #dlat = math.radians(math.radians(sta_loc[0]) - math.radians(dst_loc[0]))
-    #dlon = math.radians(math.radians(sta_loc[1]) - math.radians(dst_loc[1]))
-    #a = ((math.sin(dlat/2)) ** 2) + math.cos(math.radians(sta_loc[0])) * math.cos(math.radians(dst_loc[0])) * (math.sin(dlon/2) ** 2)
-    #c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
-    #d = constants.R * c
-    #return d
+    return distance
+
+  def calc_abs_dist(self, dst_gate):
+    sta_loc = self.abs_loc()
+    dst_loc = dst_gate.abs_loc()
+    dlat = math.radians(math.radians(sta_loc[0]) - math.radians(dst_loc[0]))
+    dlon = math.radians(math.radians(sta_loc[1]) - math.radians(dst_loc[1]))
+    a = ((math.sin(dlat/2)) ** 2) + math.cos(math.radians(sta_loc[0])) * math.cos(math.radians(dst_loc[0])) * (math.sin(dlon/2) ** 2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    d = constants.R * c
+    return d
 
 
   def print(self):
@@ -78,3 +97,5 @@ class Gate(Station):
     print('Neighbors: ', end='')
     print(self.neighbors)
     print('Distance: ' + str(self.edge_dist_tt))
+    print('Distance Priority: ' + str(self.dist_prio))
+    print('Availability Priority: ' + str(self.availability_priority))
