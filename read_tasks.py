@@ -61,7 +61,7 @@ def read(path):
     begin_entry = 12 * begin_time
     comments = sheet.values[i, 10]
     available_checkers = 0
-    for j in range(19, checker_rows):   #bottom 12 checkers are assigned to subway (starting from row 21)
+    for j in range(19, 31):   #bottom 12 checkers are assigned to subway (starting from row 21)
       if day == 'WKD':
         if ((int(checker_schedule.values[j,3])) - 100) >= begin_time:
           if (int(checker_schedule.values[j,2])) <= begin_time:
@@ -92,8 +92,10 @@ def read(path):
       loc = []
       print('Location for ' + name + ' not found.')
 
-    task = Gate(name = name, boro = boro, loc = loc, routes = routes, gate_id = gate_id, begin_time = begin_time,
-                task_matrix = task_matrix, day = day, comments = comments, availability_priority = availability_priority)
+    task = Gate(name = name, boro = boro, loc = loc, routes = routes,
+                gate_id = gate_id, begin_time = begin_time,
+                task_matrix = task_matrix, day = day, comments = comments,
+                availability_priority = availability_priority+0.5)
 
     # adding vertex to graph
     if task.day == constants.DAY[0]:
@@ -112,7 +114,8 @@ def read(path):
   # wkd_graph.print()
   # sat_graph.print()
   # sun_graph.print()
-  #wkd_graph.vertices[0][2].print()
+  #wkd_graph.vertices[0][0].print()
+  #wkd_graph.vertices[2][5].print()
 
   return wkd_graph, sat_graph, sun_graph
 
