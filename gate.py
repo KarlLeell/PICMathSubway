@@ -1,6 +1,8 @@
 #==========================================
 # Title:  Gate Class
 # Author: NYUPICMathSubwayGroup
+# Date:   2020.03.02
+# Comment:
 # Date:   2020.03.23
 #==========================================
 
@@ -8,6 +10,8 @@ import numpy as np
 from station import Station
 import math
 import constants
+import subprocess
+import json
 
 class Gate(Station):
 
@@ -48,7 +52,32 @@ class Gate(Station):
   def find_neighbors(self):
     return self.neighbors
 
-  def calc_edge_dist_tt(self, dst_gate):
+  def calc_travel_time(self, dst_gate):
+    # if the same location return 0
+    if self.loc == dst_gate.loc:
+      return 0
+
+    str1 = """ 'http://localhost:8080/otp/routers/default/plan?fromPlace="""
+    str2 = """&toPlace="""
+    str3 = """&time=1:02pm&date=3-18-2020&mode=TRANSIT,WALK&maxWalkDistance=500&arriveBy=false'"""
+    loc1 = str(self.loc)[1:-1].replace(' ', '')
+    loc2 = str(dst_gate.loc)[1:-1].replace (' ', '')
+    str4 = str1 + loc1 + str2 + loc2 + str3
+    travel_time = "curl" + str4
+    process = subprocess.run(travel_time, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    output = process.stdout.decode('utf8')
+    plans = json.loads(output)
+    plan = plans.get('plan')
+    if plan:
+      distance = float(plan['itineraries'][0]['duration']) / 60
+    else:
+      if self.calc_abs_dist(dst_gate) < 0.5:
+        distance = 10
+      else:
+        distance = 50
+    return distance
+
+  def calc_abs_dist(self, dst_gate):
     sta_loc = self.abs_loc()
     dst_loc = dst_gate.abs_loc()
     dlat = math.radians(math.radians(sta_loc[0]) - math.radians(dst_loc[0]))

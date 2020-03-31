@@ -48,6 +48,7 @@ class Graph():
         for j in range(5):
           # distance between skipping vertices connecting each other is 0
           self.vertices[i-1][j].edge_dist_tt.append(0)
+          self.vertices[i-1][j].dist_prio.append(0)
       # connect starting empty vertices with skipping vertex at the first layer
       else:
         self.empty_vertex.neighbors.append(lic_empty_vertex) 
@@ -57,6 +58,7 @@ class Graph():
         self.empty_vertex.neighbors.append(skip_empty_vertexBX)
         for j in range(5):
           self.empty_vertex.edge_dist_tt.append(0)
+          self.empty_vertex.dist_prio.append(0)
 
   def add_vertex(self, vertex):
     # the vertex should be an instance of Gate
@@ -70,6 +72,7 @@ class Graph():
       # connect starting empty vertex with this vertex
       self.empty_vertex.neighbors.append(vertex)
       self.empty_vertex.edge_dist_tt.append(0)
+      self.empty_vertex.dist_prio.append(0)
     else:
       # connect vertices on last layer and this vertex
       for prev_vertex in self.vertices[time-1]:
@@ -80,9 +83,11 @@ class Graph():
         # set this to be 5 for now
         if 'Skip' in prev_vertex.name:
           prev_vertex.edge_dist_tt.append(0)
+          prev_vertex.dist_prio.append(0)
         else:
-          distance = prev_vertex.calc_edge_dist_tt(vertex)
+          distance = prev_vertex.calc_travel_time(vertex)
           prev_vertex.edge_dist_tt.append(distance)
+          prev_vertex.dist_prio.append(0 - distance)
         
     if time != 23:
       # connect this vertex and vertices on next layer
@@ -92,9 +97,11 @@ class Graph():
         vertex.neighbors.append(next_vertex)
         if 'Skip' in next_vertex.name:
           vertex.edge_dist_tt.append(0)
+          vertex.dist_prio.append(0)
         else:
-          distance = vertex.calc_edge_dist_tt(next_vertex)
+          distance = vertex.calc_travel_time(next_vertex)
           vertex.edge_dist_tt.append(distance)
+          vertex.dist_prio.append(0 - distance)
 
   def normalize_distance_priority(self):
     list_of_all_distances = []
@@ -106,8 +113,8 @@ class Graph():
     while len(q) != 0:
       for vertex in q:
         #print('Calc for ' + vertex.name)
-        list_of_all_distances.extend(vertex.edge_dist_tt)
-        number_of_elements.append(len(vertex.edge_dist_tt))
+        list_of_all_distances.extend(vertex.dist_prio)
+        number_of_elements.append(len(vertex.dist_prio))
         if q_next == []:
           q_next.extend(vertex.neighbors)
       q = q_next[::]
@@ -122,7 +129,7 @@ class Graph():
     while len(q) != 0:
       for vertex in q:
         #print('Recover for ' + vertex.name)
-        vertex.dist_prio.extend(normalized_prio[current:current+number_of_elements[index]])
+        vertex.dist_prio = normalized_prio[current:current+number_of_elements[index]][::]
         if q_next == []:
           q_next.extend(vertex.neighbors)
         current = current + number_of_elements[index]
