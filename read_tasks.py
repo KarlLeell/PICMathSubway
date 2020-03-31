@@ -11,6 +11,7 @@ import argparse
 from station import Station
 from gate import Gate
 from subway_graph import Graph
+from tqdm import tqdm
 import constants
 
 
@@ -46,7 +47,7 @@ def read(path):
     if not station_id_book.get(station_loc_id):
       station_id_book[station_loc_id]=station_id
 
-  for i in range(rows):
+  for i in tqdm(range(rows)):
     gate_id = sheet.values[i, 1]
     day = sheet.values[i, 2]
     # begin_time has 24-hour format in form x00 where it actually means x:00

@@ -8,12 +8,8 @@
 import numpy as np
 from gate import Gate
 import constants
-<<<<<<< HEAD
-import copy as cp
-=======
 from queue import Queue
 from scipy import stats
->>>>>>> master
 
 class Graph():
 
@@ -84,7 +80,7 @@ class Graph():
         if 'Skip' in prev_vertex.name:
           prev_vertex.edge_dist_tt.append(0)
         else:
-          distance = prev_vertex.calc_edge_dist_tt(vertex)
+          distance = prev_vertex.calc_travel_time(vertex)
           prev_vertex.edge_dist_tt.append(distance)
         
     if time != 23:
@@ -96,7 +92,7 @@ class Graph():
         if 'Skip' in next_vertex.name:
           vertex.edge_dist_tt.append(0)
         else:
-          distance = vertex.calc_edge_dist_tt(next_vertex)
+          distance = vertex.calc_travel_time(next_vertex)
           vertex.edge_dist_tt.append(distance)
 
   def normalize_distance_priority(self):
