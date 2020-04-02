@@ -13,7 +13,7 @@ from scipy import stats
 
 class Graph():
 
-  def __init__(self, day = constants.DAY[0]):
+  def __init__(self, day = DAY[0]):
     self.day = day
     self.empty_vertex = Gate(name = 'Root', begin_time = 0, day = self.day)
     #self.lic_vertex = Gate(name = 'LIC', begin_time = 0, day = self.day)
@@ -26,28 +26,46 @@ class Graph():
       skip_empty_vertexQ = Gate(name = 'SkipQ', begin_time = i, boro = 'Q', day = self.day)
       skip_empty_vertexBK = Gate(name = 'SkipBK', begin_time = i, boro = 'BK', day = self.day)
       skip_empty_vertexBX = Gate(name = 'SkipBX', begin_time = i, boro = 'BX', day = self.day)
-      lic_empty_vertex = Gate(name = 'LIC', begin_time = i, day = self.day, loc = [40.733997064, -73.935996256])
+      lic_empty_vertex = Gate(name = 'LIC', begin_time = i, day = self.day,
+                              loc = [LIC_LATITUDE, LIC_LONGITUDE])
 
       self.vertices[i].append(lic_empty_vertex)
       self.vertices[i].append(skip_empty_vertexM)
       self.vertices[i].append(skip_empty_vertexQ)
       self.vertices[i].append(skip_empty_vertexBK)
       self.vertices[i].append(skip_empty_vertexBX)
-
+      # [0 LIC, 1 M, 2 Q, 3 BK, 4 BX]
       # connect skipping vertices at current layer to that at next layer
       if i != 0:
+        '''
         self.vertices[i-1][0].neighbors.append(lic_empty_vertex)
         self.vertices[i-1][0].neighbors.append(skip_empty_vertexM)
         self.vertices[i-1][0].neighbors.append(skip_empty_vertexQ)
         self.vertices[i-1][0].neighbors.append(skip_empty_vertexBK)
         self.vertices[i-1][0].neighbors.append(skip_empty_vertexBX)
+        '''
+        self.vertices[i-1][1].neighbors.append(lic_empty_vertex)
         self.vertices[i-1][1].neighbors.append(skip_empty_vertexM)
+        
+        self.vertices[i-1][2].neighbors.append(lic_empty_vertex)
         self.vertices[i-1][2].neighbors.append(skip_empty_vertexQ)
+        
+        self.vertices[i-1][3].neighbors.append(lic_empty_vertex)
         self.vertices[i-1][3].neighbors.append(skip_empty_vertexBK)
+        
+        self.vertices[i-1][4].neighbors.append(lic_empty_vertex)
         self.vertices[i-1][4].neighbors.append(skip_empty_vertexBX)
+        '''
         for j in range(5):
+          self.vertices[i-1][0].edge_dist_tt.append(0)
+          self.vertices[i-1][0].dist_prio.append(0)
+        '''
+        for j in range(4):
           # distance between skipping vertices connecting each other is 0
-          self.vertices[i-1][j].edge_dist_tt.append(0)
+          self.vertices[i-1][j+1].edge_dist_tt.append(0) # skip to lic is 0
+          self.vertices[i-1][j+1].dist_prio.append(0) # skip to lic is 0
+          self.vertices[i-1][j+1].edge_dist_tt.append(0) # skip to skip is 0
+          self.vertices[i-1][j+1].dist_prio.append(0) # skip to skip is 0
       # connect starting empty vertices with skipping vertex at the first layer
       else:
         self.empty_vertex.neighbors.append(lic_empty_vertex) 
@@ -57,6 +75,7 @@ class Graph():
         self.empty_vertex.neighbors.append(skip_empty_vertexBX)
         for j in range(5):
           self.empty_vertex.edge_dist_tt.append(0)
+          self.empty_vertex.dist_prio.append(0)
 
   def add_vertex(self, vertex):
     # the vertex should be an instance of Gate
@@ -70,6 +89,7 @@ class Graph():
       # connect starting empty vertex with this vertex
       self.empty_vertex.neighbors.append(vertex)
       self.empty_vertex.edge_dist_tt.append(0)
+      self.empty_vertex.dist_prio.append(0)
     else:
       # connect vertices on last layer and this vertex
       for prev_vertex in self.vertices[time-1]:
@@ -80,9 +100,11 @@ class Graph():
         # set this to be 5 for now
         if 'Skip' in prev_vertex.name:
           prev_vertex.edge_dist_tt.append(0)
+          prev_vertex.dist_prio.append(0)
         else:
-          distance = prev_vertex.calc_edge_dist_tt(vertex)
+          distance = prev_vertex.calc_travel_time(vertex)
           prev_vertex.edge_dist_tt.append(distance)
+          prev_vertex.dist_prio.append(0 - distance)
         
     if time != 23:
       # connect this vertex and vertices on next layer
@@ -92,9 +114,11 @@ class Graph():
         vertex.neighbors.append(next_vertex)
         if 'Skip' in next_vertex.name:
           vertex.edge_dist_tt.append(0)
+          vertex.dist_prio.append(0)
         else:
-          distance = vertex.calc_edge_dist_tt(next_vertex)
+          distance = vertex.calc_travel_time(next_vertex)
           vertex.edge_dist_tt.append(distance)
+          vertex.dist_prio.append(0 - distance)
 
   def normalize_distance_priority(self):
     list_of_all_distances = []
@@ -106,8 +130,8 @@ class Graph():
     while len(q) != 0:
       for vertex in q:
         #print('Calc for ' + vertex.name)
-        list_of_all_distances.extend(vertex.edge_dist_tt)
-        number_of_elements.append(len(vertex.edge_dist_tt))
+        list_of_all_distances.extend(vertex.dist_prio)
+        number_of_elements.append(len(vertex.dist_prio))
         if q_next == []:
           q_next.extend(vertex.neighbors)
       q = q_next[::]
@@ -122,7 +146,7 @@ class Graph():
     while len(q) != 0:
       for vertex in q:
         #print('Recover for ' + vertex.name)
-        vertex.dist_prio.extend(normalized_prio[current:current+number_of_elements[index]])
+        vertex.dist_prio = normalized_prio[current:current+number_of_elements[index]][::]
         if q_next == []:
           q_next.extend(vertex.neighbors)
         current = current + number_of_elements[index]
