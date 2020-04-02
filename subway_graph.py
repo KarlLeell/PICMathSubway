@@ -13,7 +13,7 @@ from scipy import stats
 
 class Graph():
 
-  def __init__(self, day = constants.DAY[0]):
+  def __init__(self, day = DAY[0]):
     self.day = day
     self.empty_vertex = Gate(name = 'Root', begin_time = 0, day = self.day)
     #self.lic_vertex = Gate(name = 'LIC', begin_time = 0, day = self.day)
@@ -28,31 +28,44 @@ class Graph():
       skip_empty_vertexBX = Gate(name = 'SkipBX', begin_time = i, boro = 'BX', day = self.day)
       lic_empty_vertex = Gate(name = 'LIC', begin_time = i, day = self.day,
                               loc = [constants.LIC_LATITUDE, constants.LIC_LONGITUDE])
-
       self.vertices[i].append(lic_empty_vertex)
       self.vertices[i].append(skip_empty_vertexM)
       self.vertices[i].append(skip_empty_vertexQ)
       self.vertices[i].append(skip_empty_vertexBK)
       self.vertices[i].append(skip_empty_vertexBX)
-
+      # [0 LIC, 1 M, 2 Q, 3 BK, 4 BX]
       # connect skipping vertices at current layer to that at next layer
       if i != 0:
+        '''
         self.vertices[i-1][0].neighbors.append(lic_empty_vertex)
         self.vertices[i-1][0].neighbors.append(skip_empty_vertexM)
         self.vertices[i-1][0].neighbors.append(skip_empty_vertexQ)
         self.vertices[i-1][0].neighbors.append(skip_empty_vertexBK)
         self.vertices[i-1][0].neighbors.append(skip_empty_vertexBX)
+        '''
+        self.vertices[i-1][1].neighbors.append(lic_empty_vertex)
         self.vertices[i-1][1].neighbors.append(skip_empty_vertexM)
+        
+        self.vertices[i-1][2].neighbors.append(lic_empty_vertex)
         self.vertices[i-1][2].neighbors.append(skip_empty_vertexQ)
+        
+        self.vertices[i-1][3].neighbors.append(lic_empty_vertex)
         self.vertices[i-1][3].neighbors.append(skip_empty_vertexBK)
+        
+        self.vertices[i-1][4].neighbors.append(lic_empty_vertex)
         self.vertices[i-1][4].neighbors.append(skip_empty_vertexBX)
+        '''
         for j in range(5):
           self.vertices[i-1][0].edge_dist_tt.append(0)
           self.vertices[i-1][0].dist_prio.append(0)
+        '''
         for j in range(4):
           # distance between skipping vertices connecting each other is 0
-          self.vertices[i-1][j+1].edge_dist_tt.append(0)
-          self.vertices[i-1][j+1].dist_prio.append(0)
+          self.vertices[i-1][j+1].edge_dist_tt.append(0) # skip to lic is 0
+          self.vertices[i-1][j+1].dist_prio.append(0) # skip to lic is 0
+          self.vertices[i-1][j+1].edge_dist_tt.append(0) # skip to skip is 0
+          self.vertices[i-1][j+1].dist_prio.append(0) # skip to skip is 0
+
       # connect starting empty vertices with skipping vertex at the first layer
       else:
         self.empty_vertex.neighbors.append(lic_empty_vertex) 
