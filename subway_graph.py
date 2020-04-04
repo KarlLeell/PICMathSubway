@@ -13,7 +13,7 @@ from scipy import stats
 
 class Graph():
 
-  def __init__(self, day = DAY[0]):
+  def __init__(self, day = constants.DAY[0]):
     self.day = day
     self.empty_vertex = Gate(name = 'Root', begin_time = 0, day = self.day)
     #self.lic_vertex = Gate(name = 'LIC', begin_time = 0, day = self.day)
@@ -119,6 +119,45 @@ class Graph():
           distance = vertex.calc_travel_time(next_vertex)
           vertex.edge_dist_tt.append(distance)
           vertex.dist_prio.append(0 - distance)
+
+  def find_vertex(self, booth_id, begin_time):
+    for vertex in self.vertices[begin_time]:
+      if vertex.booth_id == booth_id and vertex.name == name:
+        return vertex
+    # if not found return none
+    return None
+
+  def delete_vertex(self, vertex=None, booth_id='', begin_time=0):
+    if not vertex:
+      vertex = self.find(booth_id, begin_time)
+      if not vertex:
+        # return false if not vertex found
+        return False
+    # return false if not a Gate object
+    if type(vertex) != self.empty_vertex:
+      return False
+
+    # remove edges to this vertex
+    if vertex.begin_time != 0:
+      for prev_vertex in self.vertices[vertex.begin_time - 1]:
+        for i in range(len(prev_vertex.neighbors)):
+          if prev_vertex.neighbors[i].booth_id == booth_id:
+            prev_vertex.neighbors.pop(i)
+            prev_vertex.edge_dist_tt.pop(i)
+            prev_vertex.dist_prio.pop(i)
+            break
+    else:
+      for i in range(len(self.empty_vertex.neighbors)):
+        if self.empty_vertex.neighbors[i].booth_id == booth_id:
+          self.empty_vertex.neighbors.pop(i)
+          self.empty_vertex.edge_dist_tt.pop(i)
+          self.empty_vertex.dist_prio.pop(i)
+          break
+
+    # remove this vertex from list
+    self.vertices[begin_time].remove(vertex)
+
+    return True
 
   def normalize_distance_priority(self):
     list_of_all_distances = []
