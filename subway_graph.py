@@ -122,20 +122,23 @@ class Graph():
 
   def find_vertex(self, booth_id, begin_time):
     for vertex in self.vertices[begin_time]:
-      if vertex.booth_id == booth_id and vertex.name == name:
+      if vertex.booth_id == booth_id and vertex.begin_time == begin_time:
         return vertex
     # if not found return none
     return None
 
   def delete_vertex(self, vertex=None, booth_id='', begin_time=0):
     if not vertex:
-      vertex = self.find(booth_id, begin_time)
+      vertex = self.find_vertex(booth_id, begin_time)
       if not vertex:
         # return false if not vertex found
         return False
     # return false if not a Gate object
-    if type(vertex) != self.empty_vertex:
+    if type(vertex) != type(self.empty_vertex):
       return False
+
+    booth_id = vertex.booth_id
+    begin_time = vertex.begin_time
 
     # remove edges to this vertex
     if vertex.begin_time != 0:
