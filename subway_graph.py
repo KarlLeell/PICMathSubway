@@ -165,36 +165,22 @@ class Graph():
   def normalize_distance_priority(self):
     list_of_all_distances = []
     number_of_elements = []
-    # TODO: This is a very slow implementation, should in the future switch to Queue
     q = []
-    q_next = []
-    q.append(self.empty_vertex)
-    while len(q) != 0:
-      for vertex in q:
+    for l in self.vertices:
+      for vertex in l:
         #print('Calc for ' + vertex.name)
         list_of_all_distances.extend(vertex.dist_prio)
         number_of_elements.append(len(vertex.dist_prio))
-        if q_next == []:
-          q_next.extend(vertex.neighbors)
-      q = q_next[::]
-      q_next = []
+        q.append(vertex)
     normalized_prio = stats.zscore(list_of_all_distances).tolist()
     #print('Done calc')
-    index = 0
     current = 0
-    q = []
-    q_next = []
-    q.append(self.empty_vertex)
-    while len(q) != 0:
-      for vertex in q:
-        #print('Recover for ' + vertex.name)
-        vertex.dist_prio = normalized_prio[current:current+number_of_elements[index]][::]
-        if q_next == []:
-          q_next.extend(vertex.neighbors)
-        current = current + number_of_elements[index]
-        index = index + 1
-      q = q_next[::]
-      q_next = []
+    for i in range(len(q)):
+      vertex = q[i]
+      num_ele = number_of_elements[i]
+      #print('Recover for ' + vertex.name)
+      vertex.dist_prio = normalized_prio[current:current+num_ele][::]
+      current = current + num_ele
     #print('Done recover')
 
 
