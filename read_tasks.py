@@ -12,6 +12,7 @@ from station import Station
 from gate import Gate
 from subway_graph import Graph
 from tqdm import tqdm
+import pickle
 import constants
 
 
@@ -48,7 +49,7 @@ def read(path):
       station_id_book[station_loc_id]=station_id
 
   for i in tqdm(range(rows)):
-    gate_id = sheet.values[i, 1]
+    booth_id = sheet.values[i, 1]
     day = sheet.values[i, 2]
     # begin_time has 24-hour format in form x00 where it actually means x:00
     # mod 24 because there are some 2400 to 2500 tasks
@@ -83,7 +84,7 @@ def read(path):
     for i in range(begin_entry, begin_entry+12):
       task_matrix[i, 0] = 1
     # get location of a station
-    station_id = station_id_book.get(str(gate_id))
+    station_id = station_id_book.get(str(booth_id))
     if not station_id:
       loc = []
       print('Station ID for ' + name + ' not found.')
@@ -93,7 +94,7 @@ def read(path):
       print('Location for ' + name + ' not found.')
 
     task = Gate(name = name, boro = boro, loc = loc, routes = routes,
-                gate_id = gate_id, begin_time = begin_time,
+                booth_id = booth_id, begin_time = begin_time,
                 task_matrix = task_matrix, day = day, comments = comments,
                 availability_priority = availability_priority+0.5)
 
@@ -116,6 +117,11 @@ def read(path):
   # sun_graph.print()
   #wkd_graph.vertices[0][0].print()
   #wkd_graph.vertices[2][5].print()
+
+  with open('wkd_save.pkl','wb') as wkd, open('sat_save.pkl', 'wb') as sat, open('sun_save.pkl', 'wb') as sun:
+    pickle.dump(wkd_graph, wkd)
+    pickle.dump(sat_graph, sat)
+    pickle.dump(sun_graph, sun)
 
   return wkd_graph, sat_graph, sun_graph
 

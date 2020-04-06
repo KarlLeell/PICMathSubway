@@ -22,18 +22,19 @@ class Gate(Station):
     return self.name
 
 
-  def __init__(self, name = '', loc = None, boro = '', routes = None, gate_id = '', begin_time = 0,
-                task_matrix = np.zeros((24*12, 1)), day = '', neighbors = None, edge_dist_tt = None, dist_prio = None,
+  def __init__(self, name = '', loc = None, boro = '', routes = None,
+                booth_id = '', begin_time = 0, task_matrix = np.zeros((24*12, 1)),
+                day = '', neighbors = None, edge_dist_tt = None, dist_prio = None,
                 comments = '', dummy_value = 0, availability_priority = 0):
 
     # inherited attribute
     #self.name_ = name
+    #self.booth_id = booth_id
     #self.loc_ = loc
     #self.boro_ = boro
     #self.routes_ = routes
-    super().__init__(name, loc, boro, routes)
+    super().__init__(name, booth_id, loc, boro, routes)
     # self attributes
-    self.gate_id = gate_id
     self.begin_time = begin_time
     self.task_matrix = task_matrix
     self.day = day

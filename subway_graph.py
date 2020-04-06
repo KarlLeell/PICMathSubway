@@ -13,7 +13,7 @@ from scipy import stats
 
 class Graph():
 
-  def __init__(self, day = DAY[0]):
+  def __init__(self, day = constants.DAY[0]):
     self.day = day
     self.empty_vertex = Gate(name = 'Root', begin_time = 0, day = self.day)
     #self.lic_vertex = Gate(name = 'LIC', begin_time = 0, day = self.day)
@@ -120,39 +120,67 @@ class Graph():
           vertex.edge_dist_tt.append(distance)
           vertex.dist_prio.append(0 - distance)
 
+  def find_vertex(self, booth_id, begin_time):
+    for vertex in self.vertices[begin_time]:
+      if vertex.booth_id == booth_id and vertex.begin_time == begin_time:
+        return vertex
+    # if not found return none
+    return None
+
+  def delete_vertex(self, vertex=None, booth_id='', begin_time=0):
+    if not vertex:
+      vertex = self.find_vertex(booth_id, begin_time)
+      if not vertex:
+        # return false if not vertex found
+        return False
+    # return false if not a Gate object
+    if type(vertex) != type(self.empty_vertex):
+      return False
+
+    booth_id = vertex.booth_id
+    begin_time = vertex.begin_time
+
+    # remove edges to this vertex
+    if vertex.begin_time != 0:
+      for prev_vertex in self.vertices[vertex.begin_time - 1]:
+        for i in range(len(prev_vertex.neighbors)):
+          if prev_vertex.neighbors[i].booth_id == booth_id:
+            prev_vertex.neighbors.pop(i)
+            prev_vertex.edge_dist_tt.pop(i)
+            prev_vertex.dist_prio.pop(i)
+            break
+    else:
+      for i in range(len(self.empty_vertex.neighbors)):
+        if self.empty_vertex.neighbors[i].booth_id == booth_id:
+          self.empty_vertex.neighbors.pop(i)
+          self.empty_vertex.edge_dist_tt.pop(i)
+          self.empty_vertex.dist_prio.pop(i)
+          break
+
+    # remove this vertex from list
+    self.vertices[begin_time].remove(vertex)
+
+    return True
+
   def normalize_distance_priority(self):
     list_of_all_distances = []
     number_of_elements = []
-    # TODO: This is a very slow implementation, should in the future switch to Queue
     q = []
-    q_next = []
-    q.append(self.empty_vertex)
-    while len(q) != 0:
-      for vertex in q:
+    for l in self.vertices:
+      for vertex in l:
         #print('Calc for ' + vertex.name)
         list_of_all_distances.extend(vertex.dist_prio)
         number_of_elements.append(len(vertex.dist_prio))
-        if q_next == []:
-          q_next.extend(vertex.neighbors)
-      q = q_next[::]
-      q_next = []
+        q.append(vertex)
     normalized_prio = stats.zscore(list_of_all_distances).tolist()
     #print('Done calc')
-    index = 0
     current = 0
-    q = []
-    q_next = []
-    q.append(self.empty_vertex)
-    while len(q) != 0:
-      for vertex in q:
-        #print('Recover for ' + vertex.name)
-        vertex.dist_prio = normalized_prio[current:current+number_of_elements[index]][::]
-        if q_next == []:
-          q_next.extend(vertex.neighbors)
-        current = current + number_of_elements[index]
-        index = index + 1
-      q = q_next[::]
-      q_next = []
+    for i in range(len(q)):
+      vertex = q[i]
+      num_ele = number_of_elements[i]
+      #print('Recover for ' + vertex.name)
+      vertex.dist_prio = normalized_prio[current:current+num_ele][::]
+      current = current + num_ele
     #print('Done recover')
 
 
