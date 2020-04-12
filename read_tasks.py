@@ -75,7 +75,7 @@ def read(path):
       availability_priority = 1/available_checkers
     list_of_all_av_prio.append(availability_priority)
 
-  normalized_av_prio = stats.zscore(list_of_all_av_prio).tolist()  
+  #normalized_av_prio = stats.zscore(list_of_all_av_prio).tolist()  
       
       
   for i in tqdm(range(rows)):
@@ -91,7 +91,8 @@ def read(path):
     task_matrix = np.zeros((24*12, 1))
     begin_entry = 12 * begin_time
     comments = sheet.values[i, 10]
-    availability_priority = normalized_av_prio[i]
+    #availability_priority = normalized_av_prio[i]
+    availability_priority = list_of_all_av_prio[i]
     # mark the matrix
     for i in range(begin_entry, begin_entry+12):
       task_matrix[i, 0] = 1
@@ -122,6 +123,9 @@ def read(path):
   wkd_graph.normalize_distance_priority()
   sat_graph.normalize_distance_priority()
   sun_graph.normalize_distance_priority()
+  wkd_graph.normalize_availability_priority()
+  sat_graph.normalize_availability_priority()
+  sun_graph.normalize_availability_priority()
 
   #print and see the graphs 
   # wkd_graph.print()

@@ -174,6 +174,18 @@ class Graph():
       current = current + num_ele
     #print('Done recover')
 
+  def normalize_availability_priority(self):
+    list_of_all_avail = []
+    for l in self.vertices:
+      for vertex in l:
+        list_of_all_avail.append(vertex.availability_priority)
+    normalized_avail = stats.zscore(list_of_all_avail).tolist()
+    index = 0
+    for l in self.vertices:
+      for vertex in l:
+        vertex.availability_priority = normalized_avail[index]
+        index = index + 1
+
 
   def print(self):
     print('Graph for ' + self.day)
