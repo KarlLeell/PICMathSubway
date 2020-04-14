@@ -249,12 +249,18 @@ class Graph():
     if not vertex:
       vertex = self.find_vertex(booth_id, begin_time)
       if not vertex:
-        # return false if not vertex found
+        # return false if no vertex found
         return False
     # return false if not a Gate object
     if type(vertex) != type(self.empty_vertex):
       return False
 
+    if self.graph_type == constants.GRAPH_TYPE[0]:
+      return self.naive_del_vertex(vertex)
+    elif self.graph_type == constants.GRAPH_TYPE[1]:
+      return self.fine_del_vertex(vertex)
+
+  def naive_del_vertex(self, vertex):
     booth_id = vertex.booth_id
     begin_time = vertex.begin_time
 
@@ -278,6 +284,21 @@ class Graph():
     # remove this vertex from list
     self.vertices[begin_time].remove(vertex)
 
+    return True
+
+  def fine_del_vertex(self, vertex):
+    name = vertex.name
+    if 'GSkip' not in name and 'Skip_' not in name and 'LIC' not in name:
+      for next_vertex in vertex.neighbors:
+        if 'Skip_' in next_vertex.name:
+          skip_vertex = next_vertex
+          break
+      # this is not actually necessary in current implementation, as the only
+      #   vertex that points to a private skipping vertex will be deleted too
+      #   we can simply remove it from the list of vertices
+      self.naive_del_vertex(skip_vertex)
+    self.naive_del_vertex(vertex)
+    
     return True
 
   def normalize_distance_priority(self):
