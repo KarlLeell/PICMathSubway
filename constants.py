@@ -6,6 +6,7 @@
 #==========================================
 
 DAY = ['WKD', 'SAT', 'SUN']
+GRAPH_TYPE = ['NAIVE', 'FINE']
 # radius of earth in miles
 R = 3961
 LIC_LATITUDE = 40.751767 
