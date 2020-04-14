@@ -217,6 +217,7 @@ class Graph():
           prev_vertex.edge_dist_tt.append(0)
           prev_vertex.dist_prio.append(0)
         else:
+          prev_vertex.neighbors.append(vertex)
           distance = prev_vertex.calc_travel_time(vertex)
           prev_vertex.edge_dist_tt.append(distance)
           prev_vertex.dist_prio.append(0 - distance)
