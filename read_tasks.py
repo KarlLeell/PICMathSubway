@@ -29,9 +29,9 @@ def read(path):
   checker_schedule = pd.read_excel(path[3])
   rows = len(sheet)
   checker_rows = len(checker_schedule) #checkers available for subway; will need to modify to select specific checkers
-  wkd_graph = Graph(constants.DAY[0])
-  sat_graph = Graph(constants.DAY[1])
-  sun_graph = Graph(constants.DAY[2])
+  wkd_graph = Graph(constants.DAY[0], constants.GRAPH_TYPE[1])
+  sat_graph = Graph(constants.DAY[1], constants.GRAPH_TYPE[1])
+  sun_graph = Graph(constants.DAY[2], constants.GRAPH_TYPE[1])
   #location for stations
   location_book = {}
 
