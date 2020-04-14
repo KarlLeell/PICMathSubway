@@ -29,7 +29,7 @@ class Graph():
     elif self.graph_type == constants.GRAPH_TYPE[1]:
         self.fine_init()
 
-  def naive_init():
+  def naive_init(self):
     for i in range(24):
       self.vertices.append([])
       skip_empty_vertexM = Gate(name = 'SkipM', begin_time = i, boro = 'M', day = self.day)
@@ -78,7 +78,7 @@ class Graph():
           self.empty_vertex.edge_dist_tt.append(0)
           self.empty_vertex.dist_prio.append(0)
 
-  def fine_init():
+  def fine_init(self):
     for i in range(24):
       self.vertices.append([])
       lic_empty_vertex = Gate(name = 'LIC', begin_time = i, day = self.day,
@@ -89,14 +89,17 @@ class Graph():
       
       if i != 0:
         # connect neighbors
+        self.vertices[i-1][0].neighbors.append(lic_empty_vertex)
         self.vertices[i-1][0].neighbors.append(skip_empty_vertex)
         self.vertices[i-1][1].neighbors.append(lic_empty_vertex)
         self.vertices[i-1][1].neighbors.append(skip_empty_vertex)
         # add distances of 0
         self.vertices[i-1][0].edge_dist_tt.append(0)
+        self.vertices[i-1][0].edge_dist_tt.append(0)
         self.vertices[i-1][1].edge_dist_tt.append(0)
         self.vertices[i-1][1].edge_dist_tt.append(0)
         # add distance priority
+        self.vertices[i-1][0].dist_prio.append(0)
         self.vertices[i-1][0].dist_prio.append(0)
         self.vertices[i-1][1].dist_prio.append(0)
         self.vertices[i-1][1].dist_prio.append(0)
@@ -110,9 +113,9 @@ class Graph():
 
   def add_vertex(self, vertex):
     if self.graph_type == constants.GRAPH_TYPE[0]:
-      naive_add(vertex)
+      self.naive_add(vertex)
     elif self.graph_type == constants.GRAPH_TYPE[1]:
-      fine_add(vertex)
+      self.fine_add(vertex)
 
   def naive_add(self, vertex):
     # the vertex should be an instance of Gate
@@ -160,12 +163,11 @@ class Graph():
   def fine_add(self, vertex):
 
     self.fine_add_aux(vertex)
-    #self.vertices[time].append(vertex)
     task_empty_vertex = Gate(name = 'Skip_'+vertex.name, boro=vertex.boro,
-                              loc = [vertex.loc[0], vertex.loc[1]]
-                              begin_time = vertex.begin_time+1)
-    self.find_add_aus(task_empty_vertex)
-    self.vertices[(time + 1) % 24].append(task_empty_vertex)
+                              loc = [vertex.loc[0], vertex.loc[1]],
+                              booth_id = vertex.booth_id,
+                              begin_time = (vertex.begin_time+1)%24)
+    self.fine_add_aux(task_empty_vertex)
 
   def fine_add_aux(self, vertex):
     # the vertex should be an instance of Gate
@@ -173,7 +175,8 @@ class Graph():
       print('Input vertex should be an instance of Gate')
       raise Exception('Input vertex should be an instance of Gate')
 
-    time = vertex.begin_time
+    time = vertex.begin_time % 24
+    self.vertices[time].append(vertex)
 
     if time == 0:
       # connect starting empty vertex with this vertex
@@ -181,28 +184,57 @@ class Graph():
       self.empty_vertex.edge_dist_tt.append(0)
       self.empty_vertex.dist_prio.append(0)
 
-    # connect vertices on last layer and this vertex
-    for prev_vertex in self.vertices[(time-1) % 24]:
-      prev_vertex.neighbors.append(vertex)
-      # set this to be 5 for now
-      if 'GSkip' in prev_vertex.name:
-        prev_vertex.edge_dist_tt.append(0)
-        prev_vertex.dist_prio.append(0)
-      else:
-        distance = prev_vertex.calc_travel_time(vertex)
-        prev_vertex.edge_dist_tt.append(distance)
-        prev_vertex.dist_prio.append(0 - distance)
-        
-    # connect this vertex and vertices on next layer
-    for next_vertex in self.vertices[(time+1) % 24]:
-      vertex.neighbors.append(next_vertex)
-      if 'GSkip' in next_vertex.name:
-        vertex.edge_dist_tt.append(0)
-        vertex.dist_prio.append(0)
-      else:
-        distance = vertex.calc_travel_time(next_vertex)
-        vertex.edge_dist_tt.append(distance)
-        vertex.dist_prio.append(0 - distance)
+    # if vertex is a private skipping vertex
+    if 'Skip_' in vertex.name:
+      for prev_vertex in self.vertices[(time-1) % 24]:
+        # connect its private task to it
+        if 'Skip_' + prev_vertex.name == vertex.name and prev_vertex.booth_id == vertex.booth_id:
+          prev_vertex.neighbors.append(vertex)
+          prev_vertex.edge_dist_tt.append(0)
+          prev_vertex.dist_prio.append(0)
+        # do not connect anything else
+        else:
+          continue
+      for next_vertex in self.vertices[(time+1) % 24]:
+        # connect skipping to general skipping
+        if 'GSkip' in next_vertex.name:
+          vertex.neighbors.append(next_vertex)
+          vertex.edge_dist_tt.append(0)
+          vertex.dist_prio.append(0)
+        # do not connect skipping to skipping
+        elif 'Skip_' in next_vertex.name:
+          continue
+        else:
+          vertex.neighbors.append(next_vertex)
+          distance = vertex.calc_travel_time(next_vertex)
+          vertex.edge_dist_tt.append(distance)
+          vertex.dist_prio.append(0 - distance)
+    # if vertex is a real task
+    else:
+      for prev_vertex in self.vertices[(time-1) % 24]:
+        if 'GSkip' in prev_vertex.name:
+          prev_vertex.neighbors.append(vertex)
+          prev_vertex.edge_dist_tt.append(0)
+          prev_vertex.dist_prio.append(0)
+        else:
+          distance = prev_vertex.calc_travel_time(vertex)
+          prev_vertex.edge_dist_tt.append(distance)
+          prev_vertex.dist_prio.append(0 - distance)
+      for next_vertex in self.vertices[(time+1) % 24]:
+        if 'GSkip' in next_vertex.name:
+          continue
+        elif 'Skip_' in next_vertex.name:
+          if 'Skip_' + vertex.name == next_vertex.name and vertex.booth_id == next_vertex.booth_id:
+            vertex.append(next_vertex)
+            vertex.edge_dist_tt.append(0)
+            vertex.dist_prio.append(0)
+          else:
+            continue
+        else:
+          vertex.neighbors.append(next_vertex)
+          distance = vertex.calc_travel_time(next_vertex)
+          vertex.edge_dist_tt.append(distance)
+          vertex.dist_prio.append(0 - distance)
 
 
   def find_vertex(self, booth_id, begin_time):
