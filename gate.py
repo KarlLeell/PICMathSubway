@@ -96,3 +96,6 @@ class Gate(Station):
     print('Distance: ' + str(self.edge_dist_tt))
     print('Distance Priority: ' + str(self.dist_prio))
     print('Availability Priority: ' + str(self.availability_priority))
+
+  def print_station(self):
+    super().print()
