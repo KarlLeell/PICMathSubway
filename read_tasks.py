@@ -54,20 +54,45 @@ def read(path):
   for i in (range(rows)):
     available_checkers = 0
     day = sheet.values[i,2]
-    begin_time = sheet.values[i,3]
+    begin_time = sheet.values[i,3]-100
     for j in range(19, 31):
-      if day == 'WKD':
-        if ((int(checker_schedule.values[j,3])) - 100) >= begin_time:
-          if (int(checker_schedule.values[j,2])) <= begin_time:
+      shift_end_time = int(checker_schedule.values[j,3])
+      shift_start_time = int(checker_schedule.values[j,2])
+      days_off = checker_schedule.values[j,5]
+      if shift_end_time == 0:
+        shift_end_time = 2400
+      if shift_start_time < shift_end_time:
+        if day == 'WKD':
+          if (shift_end_time - 100) >= begin_time:
+            if shift_start_time <= begin_time:
+              available_checkers += 1
+        elif day == 'SAT' and days_off == 'SUN - MON':
+          if (shift_end_time - 100) >= begin_time:
+            if shift_start_time <= begin_time:
+              available_checkers += 1
+        elif day == 'SUN' and days_off == 'FRI - SAT':
+          if (shift_end_time - 100) >= begin_time:
+            if shift_start_time <= begin_time:
+              available_checkers += 1
+      elif shift_start_time > shift_end_time:
+        if day == 'WKD':
+          if shift_start_time <= begin_time:
             available_checkers += 1
-      elif day == 'SAT' and checker_schedule.values[j,5] == 'SUN - MON':
-        if ((int(checker_schedule.values[j,3])) - 100) >= begin_time:
-          if (int(checker_schedule.values[j,2])) <= begin_time:
+          elif shift_start_time > begin_time:
+            if (shift_end_time - 100) >= begin_time:
+              available_checkers += 1
+        elif day == 'SAT' and days_off == 'SUN - MON':
+          if shift_start_time <= begin_time:
             available_checkers += 1
-      elif day == 'SUN' and checker_schedule.values[j,5] == 'FRI - SAT':
-        if ((int(checker_schedule.values[j,3])) - 100) >= begin_time:
-          if (int(checker_schedule.values[j,2])) <= begin_time:
+          elif shift_start_time > begin_time:
+            if (shift_end_time - 100) >= begin_time:
+              available_checkers += 1
+        elif day == 'SUN' and days_off == 'FRI - SAT':
+          if shift_start_time <= begin_time:
             available_checkers += 1
+          elif shift_start_time > begin_time:
+            if (shift_end_time - 100) >= begin_time:
+              available_checkers += 1
       
     if available_checkers == 0:
       availability_priority = 1
