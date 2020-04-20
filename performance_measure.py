@@ -6,7 +6,7 @@ def efficiency (MonthSchedule):
       shift_start = DaySchedule.shift_start
       shift_end = DaySchedule.shift_end
       if shift_start < shift_end:
-        time_working += shift_start - shift_end
+        time_working += shift_end - shift_start
       elif shift_start > shift_end:
         time_working += 24 - shift_start + shift_end
       for task in DaySchedule.gate_array:
