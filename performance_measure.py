@@ -1,4 +1,4 @@
-def effeciency_check(MonthSchedule):
+def efficiency (MonthSchedule):
   time_working = 0
   time_checking = 0
   for WeekSchedule in MonthSchedule:
@@ -12,3 +12,15 @@ def effeciency_check(MonthSchedule):
       for task in DaySchedule.gate_array:
         time_checking += 1
   return(time_checking/time_working)
+
+
+
+def completion(FullMonthSchedule,total_tasks):
+  completed_tasks = 0
+  for checker in FullMonthSchedule:
+    for WeekSchedule in checker:
+      for DaySchedule in WeekSchedule.DaySchedule_array:
+        for task in DaySchedule.gate_array:
+          completed_tasks += 1
+  return(completed_tasks/total_tasks)
+        
