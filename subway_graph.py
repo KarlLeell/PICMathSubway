@@ -110,6 +110,22 @@ class Graph():
         self.empty_vertex.edge_dist_tt.append(0)
         self.empty_vertex.dist_prio.append(0)
         self.empty_vertex.dist_prio.append(0)
+      if i == 23:
+        # connect to layer 0 to form a circular graph
+        self.vertices[i][0].neighbors.append(self.vertices[0][0])
+        self.vertices[i][0].neighbors.append(self.vertices[0][1])
+        self.vertices[i][1].neighbors.append(self.vertices[0][0])
+        self.vertices[i][1].neighbors.append(self.vertices[0][1])
+        # add distances of 0
+        self.vertices[i][0].edge_dist_tt.append(0)
+        self.vertices[i][0].edge_dist_tt.append(0)
+        self.vertices[i][1].edge_dist_tt.append(0)
+        self.vertices[i][1].edge_dist_tt.append(0)
+        # add distance priority
+        self.vertices[i][0].dist_prio.append(0)
+        self.vertices[i][0].dist_prio.append(0)
+        self.vertices[i][1].dist_prio.append(0)
+        self.vertices[i][1].dist_prio.append(0)
 
   def add_vertex(self, vertex):
     if self.graph_type == constants.GRAPH_TYPE[0]:
