@@ -108,7 +108,7 @@ def read(path):
     day = sheet.values[i, 2]
     # begin_time has 24-hour format in form x00 where it actually means x:00
     # mod 24 because there are some 2400 to 2500 tasks
-    begin_time = int(int(sheet.values[i, 3]) / 100 % 24)
+    begin_time = int(int(sheet.values[i, 3]) / 100 - 1)
     boro = sheet.values[i, 6]
     routes_str = str(sheet.values[i, 7])
     name = str(sheet.values[i, 8])
