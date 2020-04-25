@@ -296,6 +296,13 @@ class Graph():
           self.empty_vertex.edge_dist_tt.pop(i)
           self.empty_vertex.dist_prio.pop(i)
           break
+      for prev_vertex in self.vertices[23]:
+        for i in range(len(prev_vertex.neighbors)):
+          if prev_vertex.neighbors[i].booth_id == booth_id:
+            prev_vertex.neighbors.pop(i)
+            prev_vertex.edge_dist_tt.pop(i)
+            prev_vertex.dist_prio.pop(i)
+            break
 
     # remove this vertex from list
     self.vertices[begin_time].remove(vertex)
