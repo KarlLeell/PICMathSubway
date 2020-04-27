@@ -242,7 +242,7 @@ class Graph():
           continue
         elif 'Skip_' in next_vertex.name:
           if 'Skip_' + vertex.name == next_vertex.name and vertex.booth_id == next_vertex.booth_id:
-            vertex.append(next_vertex)
+            vertex.neighbors.append(next_vertex)
             vertex.edge_dist_tt.append(0)
             vertex.dist_prio.append(0)
           else:
