@@ -56,9 +56,11 @@ def read(path):
     day = sheet.values[i,2]
     begin_time = sheet.values[i,3]-100
     for j in range(19, 31):
-      shift_end_time = int(checker_schedule.values[j,3])
-      shift_start_time = int(checker_schedule.values[j,2])
+      shift_end_time = int(checker_schedule.values[j,3]) - 100
+      shift_start_time = int(checker_schedule.values[j,2]) + 100
       days_off = checker_schedule.values[j,5]
+      if shift_end_time == -100:
+        shift_end_time = 2300
       if shift_end_time == 0:
         shift_end_time = 2400
       if shift_start_time < shift_end_time:
