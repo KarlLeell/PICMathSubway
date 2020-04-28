@@ -21,7 +21,7 @@ from scipy import stats
 def read(path):
   print('Reading tasks: '+ path[0])
   print('Station locations reference: '+ path[1])
-  print('Station loc id reference: '+ path[2])
+  print('Station booth id to rtif id reference: '+ path[2])
   print('Checker list: '+ path[3])
   sheet = pd.read_excel(path[0])
   station_loc = pd.read_csv(path[1])
@@ -32,9 +32,9 @@ def read(path):
   wkd_graph = Graph(constants.DAY[0], constants.GRAPH_TYPE[1])
   sat_graph = Graph(constants.DAY[1], constants.GRAPH_TYPE[1])
   sun_graph = Graph(constants.DAY[2], constants.GRAPH_TYPE[1])
-  #location for stations
+  # map from rtif id to locations
   location_book = {}
-
+  # map from booth id to rtif id
   station_id_book = {}
   # build a map for stations and locations
   for i in range(len(station_loc)):
@@ -127,10 +127,10 @@ def read(path):
     station_id = station_id_book.get(str(booth_id))
     if not station_id:
       loc = []
-      print('Station ID for ' + name + ' not found.')
+      print('RTIF ID for ' + name + ' not found.')
     loc = location_book.get(station_id)
     if not loc:
-      loc = []
+      loc = [40.775594, -73.97641]
       print('Location for ' + name + ' not found.')
 
     task = Gate(name = name, boro = boro, loc = loc, routes = routes,
@@ -167,6 +167,26 @@ def read(path):
     pickle.dump(sun_graph, sun)
 
   return wkd_graph, sat_graph, sun_graph
+
+
+def read_failed_tasks(graph, file_name):
+  tasks = pandas.read_excel(file_name)
+  for i in range(len(tasks)):
+    booth_id = tasks.loc[i, 'booth_id']
+    station_name = tasks.loc[i, 'sta']
+    loc_str = tasks.loc[i, 'loc']
+    loc = loc_str[1:len(loc_str)-1].split(',')
+    day = tasks.loc[i, 'day']
+    begin_time = tasks.loc[i, 'begin']
+    boro = tasks.loc[i, 'boro']
+    routes_str = tasks.loc[i, 'routes']
+    routes = routes_str.split(',')
+    comments = tasks.loc[i, 'comments_for_checker']
+    new_gate = Gate(name = station_name, loc = loc, day = day, begin_time = begin_time, boro = boro,
+              routes = routes, comments = comments, booth_id = booth_id)
+    for g in graph:
+      if g.day == day:
+        g.add_vertex(new_gate)
 
 
 if __name__ == '__main__':
