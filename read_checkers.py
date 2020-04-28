@@ -32,7 +32,7 @@ def read(path):
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
-  parser.add_argument('-f', '--file_loc', default='NYCT FE Required Data/FE_Checker list.xlsx', type=str)
+  parser.add_argument('-f', '--file_loc', default='NYCT FE Required Data/FE Checker list.xlsx', type=str)
   args = parser.parse_args()
   path = args.file_loc
   read(path)
