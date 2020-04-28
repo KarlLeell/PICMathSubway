@@ -180,7 +180,7 @@ class Graph():
 
     self.fine_add_aux(vertex)
     task_empty_vertex = Gate(name = 'Skip_'+vertex.name, boro=vertex.boro,
-                              loc = [vertex.loc[0], vertex.loc[1]],
+                              loc = [vertex.loc[0], vertex.loc[1]], day = vertex.day,
                               booth_id = vertex.booth_id,
                               begin_time = (vertex.begin_time+1)%24)
     self.fine_add_aux(task_empty_vertex)

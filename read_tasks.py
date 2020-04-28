@@ -168,7 +168,7 @@ def read(path):
 
 
 def read_failed_tasks(graph, file_name):
-  tasks = pandas.read_excel(file_name)
+  tasks = pd.read_excel(file_name)
   for i in range(len(tasks)):
     booth_id = tasks.loc[i, 'booth_id']
     station_name = tasks.loc[i, 'sta']
