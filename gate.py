@@ -58,14 +58,35 @@ class Gate(Station):
     if self.loc == dst_gate.loc:
       return 0
 
+    dist = None
+    if self.day == constants.DAY[0]:
+      total = 0
+      for i in range(5):
+        date = constants.DATE[i]
+        dist = self.extract_travel_time(dst_gate, date)
+        total = total + dist
+      dist = total / 5
+    elif self.day == constants.DAY[1]:
+      date = constants.DATE[5]
+      dist = self.extract_travel_time(dst_gate, date)
+    elif self.day == constants.DAY[2]:
+      date = constants.DATE[6]
+      dist = self.extract_travel_time(dst_gate, date)
+    if not dist:
+      self.print()
+    return dist
+
+  def extract_travel_time(self, dst_gate, date):
     str1 = """ 'http://localhost:8080/otp/routers/default/plan?fromPlace="""
     str2 = """&toPlace="""
-    str3 = """&time=1:02pm&date=3-18-2020&mode=TRANSIT,WALK&maxWalkDistance=500&arriveBy=false'"""
+    str3 = """&time=1:02pm&date="""
+    str4 = """&mode=TRANSIT,WALK&maxWalkDistance=500&arriveBy=false'"""
     loc1 = str(self.loc)[1:-1].replace(' ', '')
     loc2 = str(dst_gate.loc)[1:-1].replace (' ', '')
-    str4 = str1 + loc1 + str2 + loc2 + str3
-    travel_time = "curl" + str4
-    process = subprocess.run(travel_time, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    str5 = str1 + loc1 + str2 + loc2 + str3 + date + str4
+    request = "curl" + str5
+
+    process = subprocess.run(request, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     output = process.stdout.decode('utf8')
     plans = json.loads(output)
     plan = plans.get('plan')
