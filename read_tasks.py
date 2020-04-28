@@ -100,6 +100,8 @@ def read(path):
       availability_priority = 1
     else:
       availability_priority = 1/available_checkers
+    if availability_priority == 1:
+      availability_priority += 1 #test buffer value
     list_of_all_av_prio.append(availability_priority)
 
   #normalized_av_prio = stats.zscore(list_of_all_av_prio).tolist()  
