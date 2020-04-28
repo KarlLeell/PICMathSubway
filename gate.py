@@ -96,7 +96,7 @@ class Gate(Station):
       if self.calc_abs_dist(dst_gate) < 0.5:
         distance = 10
       else:
-        distance = 50
+        distance = 100
     return distance
 
   def calc_abs_dist(self, dst_gate):
