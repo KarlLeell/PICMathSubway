@@ -128,11 +128,11 @@ def read(path):
     # get location of a station
     station_id = station_id_book.get(str(booth_id))
     if not station_id:
-      loc = []
+      loc = [0, 0]
       print('RTIF ID for ' + name + ' not found.')
     loc = location_book.get(station_id)
     if not loc:
-      loc = [40.775594, -73.97641]
+      loc = [0, 0]
       print('Location for ' + name + ' not found.')
 
     task = Gate(name = name, boro = boro, loc = loc, routes = routes,
