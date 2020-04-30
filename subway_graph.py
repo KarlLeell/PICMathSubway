@@ -19,6 +19,8 @@ class Graph():
     self.day = day
     self.empty_vertex = Gate(name = 'Root', begin_time = 0, day = self.day)
     self.graph_type = graph_type
+    self.am_special_tasks = []
+    self.pm_special_tasks = []
     #self.lic_vertex = Gate(name = 'LIC', begin_time = 0, day = self.day)
 
     # list of lists of tasks at all 24 hours
@@ -357,7 +359,48 @@ class Graph():
         vertex.availability_priority = normalized_avail[index]
         index = index + 1
 
-
+  
+  def sparsity_check(self):
+    sparse_indices = []
+    for layer in self.vertices:
+      real_tasks = 0
+      for gate in layer:
+        if 'Skip' not in gate.name and 'LIC' not in gate.name:
+          real_tasks += 1
+      if real_tasks == 0:
+        sparse_indices.append(self.vertices.index(layer))
+    return sparse_indices
+  
+  
+  def add_special_task(self, layer):
+    if layer < 12:
+      i = random.randint(0,len(self.am_special_tasks))
+      vertex = am_special_tasks[i]
+      del self.am_special_tasks[i]
+    elif layer >= 12:
+      i = random.randint(0,len(self.pm_special_tasks))
+      vertex = pm_special_tasks[i]
+      del self.pm_special_tasks[i]
+    vertex.begin_time = layer
+    available_checkers = self.availability_book[constants.DAY.index(self.day)][layer]
+    if available_checkers == 0:
+      vertex.availability_priority = 1
+    else:
+      vertex.availability_priority = 1/available_checkers
+    if vertex.availability_priority == 1:
+      vertex.availability_priority += 1
+    self.add_vertex(vertex)
+    
+    
+  def add_special_sample(self):
+    sparse_indices = self.sparsity_check()
+    for layer in sparse_indices:
+      self.add_special_task(layer)
+      self.add_special_task(layer)
+  
+  
+  
+  
   def print(self):
     print('Graph for ' + self.day)
     for lists in self.vertices:
