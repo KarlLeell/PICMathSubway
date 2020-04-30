@@ -168,7 +168,6 @@ def read(path):
   
   
   #read special sample
-  special_tasks = []
   for i in range(special_rows):
     booth_id = special.values[i, 1]
     day = special.values[i, 3]
@@ -195,8 +194,13 @@ def read(path):
     special_task = Gate(name = name, boro = boro, loc = loc, routes = routes,
                 booth_id = booth_id, begin_time = begin_time, day = day, comments = comments)
     
-    special_tasks.append(special_task)
-    #decide how to store the list
+    if task.day == constants.DAY[0]:
+      wkd_graph.special_tasks.append(special_task)
+    elif task.day == constants.DAY[1]:
+      sat_graph.special_tasks.append(special_task)
+    elif task.day == constants.DAY[2]:
+      sun_graph.special_tasks.append(special_task)
+ 
   
   with open('wkd_save.pkl','wb') as wkd, open('sat_save.pkl', 'wb') as sat, open('sun_save.pkl', 'wb') as sun:
     pickle.dump(wkd_graph, wkd)
