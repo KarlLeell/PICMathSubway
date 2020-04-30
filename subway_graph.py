@@ -10,6 +10,7 @@ from gate import Gate
 import constants
 from queue import Queue
 from scipy import stats
+import random
 
 
 
@@ -374,13 +375,19 @@ class Graph():
   
   def add_special_task(self, layer):
     if layer < 12:
-      i = random.randint(0,len(self.am_special_tasks))
-      vertex = am_special_tasks[i]
-      del self.am_special_tasks[i]
+      if len(self.am_special_tasks) == 0:
+        return None
+      else:
+        i = random.randint(0,len(self.am_special_tasks))
+        vertex = am_special_tasks[i]
+        del self.am_special_tasks[i]
     elif layer >= 12:
-      i = random.randint(0,len(self.pm_special_tasks))
-      vertex = pm_special_tasks[i]
-      del self.pm_special_tasks[i]
+      if len(self.pm_special_tasks) == 0:
+        return None
+      else:
+        i = random.randint(0,len(self.pm_special_tasks))
+        vertex = pm_special_tasks[i]
+        del self.pm_special_tasks[i]
     vertex.begin_time = layer
     available_checkers = self.availability_book[constants.DAY.index(self.day)][layer]
     if available_checkers == 0:
