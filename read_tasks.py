@@ -192,14 +192,23 @@ def read(path):
       print('Location for ' + name + ' not found.')
       
     special_task = Gate(name = name, boro = boro, loc = loc, routes = routes,
-                booth_id = booth_id, begin_time = begin_time, day = day, comments = comments)
+                booth_id = booth_id, day = day, comments = comments)
     
     if task.day == constants.DAY[0]:
-      wkd_graph.special_tasks.append(special_task)
+      if time_period == 'AM':
+        wkd_graph.am_special_tasks.append(special_task)
+      elif time_period == 'PM':
+        wkd_graph.pm_special_tasks.append(special_task)
     elif task.day == constants.DAY[1]:
-      sat_graph.special_tasks.append(special_task)
+      if time_period == 'AM':
+        wkd_graph.am_special_tasks.append(special_task)
+      elif time_period == 'PM':
+        wkd_graph.pm_special_tasks.append(special_task)
     elif task.day == constants.DAY[2]:
-      sun_graph.special_tasks.append(special_task)
+      if time_period == 'AM':
+        wkd_graph.am_special_tasks.append(special_task)
+      elif time_period == 'PM':
+        wkd_graph.pm_special_tasks.append(special_task)
  
   
   with open('wkd_save.pkl','wb') as wkd, open('sat_save.pkl', 'wb') as sat, open('sun_save.pkl', 'wb') as sun:
