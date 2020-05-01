@@ -155,10 +155,6 @@ def read(path):
     booth_id = special.values[i, 1]
     day = special.values[i, 3]
     time_period = special.values[i, 9]
-    if time_period == 'AM': #am stored as 0, pm as 12
-      begin_time = 0
-    elif time_period == 'PM':
-      begin_time = 12
     boro = special.values[i, 5]
     routes_str = str(special.values[i, 6])
     name = str(special.values[i, 4])
@@ -184,14 +180,14 @@ def read(path):
         wkd_graph.pm_special_tasks.append(special_task)
     elif task.day == constants.DAY[1]:
       if time_period == 'AM':
-        wkd_graph.am_special_tasks.append(special_task)
+        sat_graph.am_special_tasks.append(special_task)
       elif time_period == 'PM':
-        wkd_graph.pm_special_tasks.append(special_task)
+        sat_graph.pm_special_tasks.append(special_task)
     elif task.day == constants.DAY[2]:
       if time_period == 'AM':
-        wkd_graph.am_special_tasks.append(special_task)
+        sun_graph.am_special_tasks.append(special_task)
       elif time_period == 'PM':
-        wkd_graph.pm_special_tasks.append(special_task)
+        sun_graph.pm_special_tasks.append(special_task)
  
   
   with open('wkd_save.pkl','wb') as wkd, open('sat_save.pkl', 'wb') as sat, open('sun_save.pkl', 'wb') as sun:
