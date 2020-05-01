@@ -22,6 +22,8 @@ class Graph():
     self.graph_type = graph_type
     self.am_special_tasks = []
     self.pm_special_tasks = []
+    self.availability_book = None
+
     #self.lic_vertex = Gate(name = 'LIC', begin_time = 0, day = self.day)
 
     # list of lists of tasks at all 24 hours

@@ -53,62 +53,32 @@ def read(path):
     if not station_id_book.get(station_loc_id):
       station_id_book[station_loc_id]=station_id
 
-  list_of_all_av_prio = []    
-  for i in (range(rows)):
-    available_checkers = 0
-    day = sheet.values[i,2]
-    begin_time = sheet.values[i,3]-100
-    for j in range(19, 31):
-      shift_end_time = int(checker_schedule.values[j,3]) - 100
-      shift_start_time = int(checker_schedule.values[j,2]) + 100
-      days_off = checker_schedule.values[j,5]
-      if shift_end_time == -100:
-        shift_end_time = 2300
-      if shift_end_time == 0:
-        shift_end_time = 2400
-      if shift_start_time < shift_end_time:
-        if day == 'WKD':
-          if (shift_end_time - 100) >= begin_time:
-            if shift_start_time <= begin_time:
-              available_checkers += 1
-        elif day == 'SAT' and days_off == 'SUN - MON':
-          if (shift_end_time - 100) >= begin_time:
-            if shift_start_time <= begin_time:
-              available_checkers += 1
-        elif day == 'SUN' and days_off == 'FRI - SAT':
-          if (shift_end_time - 100) >= begin_time:
-            if shift_start_time <= begin_time:
-              available_checkers += 1
-      elif shift_start_time > shift_end_time:
-        if day == 'WKD':
-          if shift_start_time <= begin_time:
-            available_checkers += 1
-          elif shift_start_time > begin_time:
-            if (shift_end_time - 100) >= begin_time:
-              available_checkers += 1
-        elif day == 'SAT' and days_off == 'SUN - MON':
-          if shift_start_time <= begin_time:
-            available_checkers += 1
-          elif shift_start_time > begin_time:
-            if (shift_end_time - 100) >= begin_time:
-              available_checkers += 1
-        elif day == 'SUN' and days_off == 'FRI - SAT':
-          if shift_start_time <= begin_time:
-            available_checkers += 1
-          elif shift_start_time > begin_time:
-            if (shift_end_time - 100) >= begin_time:
-              available_checkers += 1
-      
-    if available_checkers == 0:
-      availability_priority = 1
+  # build a 3*24 map where each entry represents the number of checkers
+  #   available at that time
+  availability_book = {}
+  for i in range(3):
+    availability_book[i] = {}
+    for j in range(24):
+      availability_book[i][j] = 0
+  for i in range(19, 31):
+    shift_end_time = int(int(checker_schedule.values[i,3]) / 100 - 1)
+    shift_start_time = int(int(checker_schedule.values[i,2]) / 100 + 1)
+    days_off = checker_schedule.values[i,5]
+    if days_off == 'FRI - SAT':
+      for j in range(shift_start_time, shift_end_time):
+        availability_book[2][j] = availability_book[2][j] + 1
+    elif days_off == 'SAT - SUN':
+      for j in range(shift_start_time, shift_end_time):
+        availability_book[0][j] = availability_book[0][j] + 1
+    elif days_off == 'SUN - MON':
+      for j in range(shift_start_time, shift_end_time):
+        availability_book[1][j] = availability_book[1][j] + 1
     else:
-      availability_priority = 1/available_checkers
-    if availability_priority == 1:
-      availability_priority += 1 #test buffer value
-    list_of_all_av_prio.append(availability_priority)
+        print('Unrecognized days off: ' + days_off)
+  wkd_graph.availability_book = availability_book
+  sat_graph.availability_book = availability_book
+  sun_graph.availability_book = availability_book
 
-  #normalized_av_prio = stats.zscore(list_of_all_av_prio).tolist()  
-      
       
   for i in tqdm(range(rows)):
     booth_id = sheet.values[i, 1]
@@ -123,19 +93,32 @@ def read(path):
     task_matrix = np.zeros((24*12, 1))
     begin_entry = 12 * begin_time
     comments = sheet.values[i, 10]
-    #availability_priority = normalized_av_prio[i]
-    availability_priority = list_of_all_av_prio[i]
+    # calculate availability priority
+    if day == constants.DAY[0]:
+      i = 0
+    elif day == constants.DAY[1]:
+      i = 1
+    elif day == constants.DAY[2]:
+      i = 2
+    available_checkers = availability_book[i][begin_time]
+    if available_checkers == 0:
+      availability_priority = 1
+    else:
+      availability_priority = 1/available_checkers
+    if availability_priority == 1:
+      availability_priority += 1 #test buffer value
+
     # mark the matrix
     for i in range(begin_entry, begin_entry+12):
       task_matrix[i, 0] = 1
     # get location of a station
     station_id = station_id_book.get(str(booth_id))
     if not station_id:
-      loc = []
+      loc = [0, 0]
       print('RTIF ID for ' + name + ' not found.')
     loc = location_book.get(station_id)
     if not loc:
-      loc = [40.775594, -73.97641]
+      loc = [0, 0]
       print('Location for ' + name + ' not found.')
 
     task = Gate(name = name, boro = boro, loc = loc, routes = routes,

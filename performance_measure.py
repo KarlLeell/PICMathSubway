@@ -13,10 +13,10 @@ def efficiency(MonthSchedule):
         for task in DaySchedule.gate_array:
           if 'Skip' not in task.name and 'LIC' not in task.name:
             time_checking += 1
-    print('total checking hours:', time_checking)
-    print('total working hours:', time_working)
-    print('working efficiency:', time_checking/time_working)
-    return(time_checking/time_working)
+  print('total checking hours:', time_checking)
+  print('total working hours:', time_working)
+  print('working efficiency:', time_checking/time_working)
+  return(time_checking/time_working)
 
 
 

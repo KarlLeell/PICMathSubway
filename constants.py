@@ -11,10 +11,10 @@ GRAPH_TYPE = ['NAIVE', 'FINE']
 R = 3961
 LIC_LATITUDE = 40.751767 
 LIC_LONGITUDE = -73.931518
-DATE = {0: '03-18-2019',  # Monday
-        1: '03-19-2019',  # Tuesday
-        2: '03-20-2019',  # Wednesday
-        3: '03-21-2019',  # Thursday
-        4: '03-22-2019',  # Friday
-        5: '03-23-2019',  # Saturday
-        6: '03-24-2019'}  # Sunday
+DATE = {0: '03-16-2020',  # Monday
+        1: '03-17-2020',  # Tuesday
+        2: '03-18-2020',  # Wednesday
+        3: '03-19-2020',  # Thursday
+        4: '03-20-2020',  # Friday
+        5: '03-21-2020',  # Saturday
+        6: '03-22-2020'}  # Sunday
