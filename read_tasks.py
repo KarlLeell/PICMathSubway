@@ -23,11 +23,14 @@ def read(path):
   print('Station locations reference: '+ path[1])
   print('Station booth id to rtif id reference: '+ path[2])
   print('Checker list: '+ path[3])
+  print('Special sample: '+ path[4])
   sheet = pd.read_excel(path[0])
   station_loc = pd.read_csv(path[1])
   station_ls = pd.read_excel(path[2])
   checker_schedule = pd.read_excel(path[3])
+  special = pd.read_excel(path[4])
   rows = len(sheet)
+  special_rows = len(special)
   checker_rows = len(checker_schedule) #checkers available for subway; will need to modify to select specific checkers
   wkd_graph = Graph(constants.DAY[0], constants.GRAPH_TYPE[1])
   sat_graph = Graph(constants.DAY[1], constants.GRAPH_TYPE[1])
@@ -145,7 +148,52 @@ def read(path):
   # sun_graph.print()
   #wkd_graph.vertices[0][0].print()
   #wkd_graph.vertices[2][5].print()
-
+  
+  
+  #read special sample
+  for i in range(special_rows):
+    booth_id = special.values[i, 1]
+    day = special.values[i, 3]
+    time_period = special.values[i, 9]
+    if time_period == 'AM': #am stored as 0, pm as 12
+      begin_time = 0
+    elif time_period == 'PM':
+      begin_time = 12
+    boro = special.values[i, 5]
+    routes_str = str(special.values[i, 6])
+    name = str(special.values[i, 4])
+    routes = routes_str.split(',')
+    comments = special.values[i, 8]
+    # get location of a station
+    station_id = station_id_book.get(str(booth_id))
+    if not station_id:
+      loc = []
+      print('RTIF ID for ' + name + ' not found.')
+    loc = location_book.get(station_id)
+    if not loc:
+      loc = [40.775594, -73.97641]
+      print('Location for ' + name + ' not found.')
+      
+    special_task = Gate(name = name, boro = boro, loc = loc, routes = routes,
+                booth_id = booth_id, day = day, comments = comments)
+    
+    if task.day == constants.DAY[0]:
+      if time_period == 'AM':
+        wkd_graph.am_special_tasks.append(special_task)
+      elif time_period == 'PM':
+        wkd_graph.pm_special_tasks.append(special_task)
+    elif task.day == constants.DAY[1]:
+      if time_period == 'AM':
+        wkd_graph.am_special_tasks.append(special_task)
+      elif time_period == 'PM':
+        wkd_graph.pm_special_tasks.append(special_task)
+    elif task.day == constants.DAY[2]:
+      if time_period == 'AM':
+        wkd_graph.am_special_tasks.append(special_task)
+      elif time_period == 'PM':
+        wkd_graph.pm_special_tasks.append(special_task)
+ 
+  
   with open('wkd_save.pkl','wb') as wkd, open('sat_save.pkl', 'wb') as sat, open('sun_save.pkl', 'wb') as sun:
     pickle.dump(wkd_graph, wkd)
     pickle.dump(sat_graph, sat)
@@ -180,7 +228,8 @@ if __name__ == '__main__':
   parser.add_argument('-s', '--station_loc', default='NYCT FE Required Data/station_location.csv', type=str)
   parser.add_argument('-i', '--station_id', default='NYCT FE Required Data/List of Stations and FCAs_v2.xlsx', type=str)
   parser.add_argument('-c', '--checker_schedule', default='NYCT FE Required Data/FE Checker List ASSIGNED.xlsx', type=str)
+  parser.add_argument('-p', '--special', default='NYCT FE Required Data/SFE Special AM-PM.xlsx', type=str)
   args = parser.parse_args()
-  path = [args.file_loc, args.station_loc, args.station_id, args.checker_schedule]
+  path = [args.file_loc, args.station_loc, args.station_id, args.checker_schedule, args.special]
   read(path)
   
