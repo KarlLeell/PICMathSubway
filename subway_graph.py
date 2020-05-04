@@ -381,14 +381,14 @@ class Graph():
         return None
       else:
         i = random.randint(0,len(self.am_special_tasks))
-        vertex = am_special_tasks[i]
+        vertex = self.am_special_tasks[i]
         del self.am_special_tasks[i]
     elif layer >= 12:
       if len(self.pm_special_tasks) == 0:
         return None
       else:
         i = random.randint(0,len(self.pm_special_tasks))
-        vertex = pm_special_tasks[i]
+        vertex = self.pm_special_tasks[i]
         del self.pm_special_tasks[i]
     vertex.begin_time = layer
     available_checkers = self.availability_book[constants.DAY.index(self.day)][layer]
