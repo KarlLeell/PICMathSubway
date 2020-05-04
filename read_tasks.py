@@ -124,7 +124,7 @@ def read(path):
     task = Gate(name = name, boro = boro, loc = loc, routes = routes,
                 booth_id = booth_id, begin_time = begin_time,
                 task_matrix = task_matrix, day = day, comments = comments,
-                availability_priority = availability_priority)
+                availability_priority_holder = availability_priority)
 
     # adding vertex to graph
     if task.day == constants.DAY[0]:
