@@ -406,6 +406,7 @@ class Graph():
     for layer in sparse_indices:
       self.add_special_task(layer)
       self.add_special_task(layer)
+    self.normalize_availability_priority()
   
   
   
