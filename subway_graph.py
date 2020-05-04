@@ -354,7 +354,7 @@ class Graph():
     list_of_all_avail = []
     for l in self.vertices:
       for vertex in l:
-        list_of_all_avail.append(vertex.availability_priority)
+        list_of_all_avail.append(vertex.availability_priority_holder)
     normalized_avail = stats.zscore(list_of_all_avail).tolist()
     index = 0
     for l in self.vertices:
@@ -393,11 +393,11 @@ class Graph():
     vertex.begin_time = layer
     available_checkers = self.availability_book[constants.DAY.index(self.day)][layer]
     if available_checkers == 0:
-      vertex.availability_priority = 1
+      vertex.availability_priority_holder = 1
     else:
-      vertex.availability_priority = 1/available_checkers
-    if vertex.availability_priority == 1:
-      vertex.availability_priority += 1
+      vertex.availability_priority_holder = 1/available_checkers
+    if vertex.availability_priority_holder == 1:
+      vertex.availability_priority_holder += 1
     self.add_vertex(vertex)
     
     
