@@ -370,7 +370,7 @@ class Graph():
       for gate in layer:
         if 'Skip' not in gate.name and 'LIC' not in gate.name:
           real_tasks += 1
-      if real_tasks == 0:
+      if real_tasks <= 2:
         sparse_indices.append(self.vertices.index(layer))
     return sparse_indices
   
@@ -380,16 +380,16 @@ class Graph():
       if len(self.am_special_tasks) == 0:
         return None
       else:
-        i = random.randint(0,len(self.am_special_tasks))
+        i = random.randint(0,len(self.am_special_tasks)-1)
         vertex = self.am_special_tasks[i]
-        del self.am_special_tasks[i]
+        self.am_special_tasks.pop(i)
     elif layer >= 12:
       if len(self.pm_special_tasks) == 0:
         return None
       else:
-        i = random.randint(0,len(self.pm_special_tasks))
+        i = random.randint(0,len(self.pm_special_tasks)-1)
         vertex = self.pm_special_tasks[i]
-        del self.pm_special_tasks[i]
+        self.pm_special_tasks.pop(i)
     vertex.begin_time = layer
     available_checkers = self.availability_book[constants.DAY.index(self.day)][layer]
     if available_checkers == 0:
@@ -398,14 +398,18 @@ class Graph():
       vertex.availability_priority_holder = 1/available_checkers
     if vertex.availability_priority_holder == 1:
       vertex.availability_priority_holder += 1
+    # print("Special Task:\n")
+    # vertex.print()
     self.add_vertex(vertex)
     
     
   def add_special_sample(self):
     sparse_indices = self.sparsity_check()
+    print("Sparse Indices: " + str(sparse_indices))
     for layer in sparse_indices:
       self.add_special_task(layer)
-      self.add_special_task(layer)
+      print("special sample added to " + str(layer))
+      # self.add_special_task(layer)
     self.normalize_availability_priority()
   
   

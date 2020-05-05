@@ -173,17 +173,17 @@ def read(path):
     special_task = Gate(name = name, boro = boro, loc = loc, routes = routes,
                 booth_id = booth_id, day = day, comments = comments)
     
-    if task.day == constants.DAY[0]:
+    if day == constants.DAY[0]:
       if time_period == 'AM':
         wkd_graph.am_special_tasks.append(special_task)
       elif time_period == 'PM':
         wkd_graph.pm_special_tasks.append(special_task)
-    elif task.day == constants.DAY[1]:
+    elif day == constants.DAY[1]:
       if time_period == 'AM':
         sat_graph.am_special_tasks.append(special_task)
       elif time_period == 'PM':
         sat_graph.pm_special_tasks.append(special_task)
-    elif task.day == constants.DAY[2]:
+    elif day == constants.DAY[2]:
       if time_period == 'AM':
         sun_graph.am_special_tasks.append(special_task)
       elif time_period == 'PM':
