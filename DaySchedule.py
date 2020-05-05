@@ -1,12 +1,13 @@
 class DaySchedule:
 # schedule for one checker for a day
-  def __init__(self, checker, day, shift_start, shift_end, gate_array, delay_array):
+  def __init__(self, checker, day, shift_start, shift_end, gate_array, delay_array, travel_time_array):
     self.checker = checker
     self.day = day
     self.shift_start = shift_start
     self.shift_end = shift_end % 24
     self.gate_array = gate_array # array of gate objects
     self.delay_array = delay_array
+    self.travel_time_array = travel_time_array
     # assert len(gate_array) == shift_end - shift_start
   def print(self):
     print('DaySchedule: day '+str(self.day)+' for checker '+str(self.checker.name))
