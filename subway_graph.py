@@ -411,6 +411,7 @@ class Graph():
       print("special sample added to " + str(layer))
       # self.add_special_task(layer)
     self.normalize_availability_priority()
+    self.normalize_distance_priority()
   
   
   
