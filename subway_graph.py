@@ -407,6 +407,7 @@ class Graph():
       self.add_special_task(layer)
       self.add_special_task(layer)
     self.normalize_availability_priority()
+    self.normalize_distance_priority()
   
   
   
