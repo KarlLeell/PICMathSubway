@@ -206,7 +206,7 @@ def read_failed_tasks(graph, file_name):
     loc_str = tasks.loc[i, 'loc']
     loc = loc_str[1:len(loc_str)-1].split(',')
     day = tasks.loc[i, 'day']
-    begin_time = tasks.loc[i, 'begin']
+    begin_time = int(tasks.loc[i, 'begin'] / 100)
     boro = tasks.loc[i, 'boro']
     routes_str = tasks.loc[i, 'routes']
     routes = routes_str.split(',')
@@ -215,7 +215,18 @@ def read_failed_tasks(graph, file_name):
               routes = routes, comments = comments, booth_id = booth_id)
     for g in graph:
       if g.day == day:
+        daytype = constants.DAY.index(day)
+        available_checkers = g.availability_book[daytype][new_gate.begin_time]
+        if available_checkers != 0:
+          new_gate.availability_priority_holder = 1 / available_checkers
+        else:
+          new_gate.availability_priority_holder = 1
+        if available_checkers == 1:
+          new_gate.availability_priority_holder = 2
         g.add_vertex(new_gate)
+  for g in graph:
+    g.normalize_distance_priority()
+    g.normalize_availability_priority()
 
 
 if __name__ == '__main__':
