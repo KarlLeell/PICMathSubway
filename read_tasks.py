@@ -218,7 +218,7 @@ def read_failed_tasks(graph, file_name):
     new_gate = Gate(name = station_name, loc = loc, day = day, sample_id = sample_id,
                       begin_time = begin_time, boro = boro, routes = routes,
                       comments = comments, booth_id = booth_id,
-                      task_type = constans.TASK_TYPE[1])
+                      task_type = constants.TASK_TYPE[1])
     for g in graph:
       if g.day == day:
         daytype = constants.DAY.index(day)

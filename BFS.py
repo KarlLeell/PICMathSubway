@@ -335,6 +335,7 @@ def week_bfs_for1(graphs, checker): # create schedule for a week (one checker)
   else:
     duration = 6
   week_values = []
+
   # print(range(checker.shift_start, checker.shift_start+13-duration+1))
   for start_time in range(checker.shift_start, checker.shift_start+13-duration+1):
   # for start_time in [21]:
@@ -369,23 +370,64 @@ def week_bfs_for1(graphs, checker): # create schedule for a week (one checker)
       else:
         sun_graph = delete_nodes(nodes_path, gates)
     week_values.append(week_value)
-  print("for checker " + checker.name + ": " + str(week_values))
+  # print("for checker " + checker.name + ": " + str(week_values))
 
-  # run again using best shift start
+
+  #find best shift start time for each day
   best_shift_start = range(checker.shift_start, checker.shift_start+13-duration+1)[week_values.index(max(week_values))]
-  start_time = best_shift_start
-  # start_time = 21
-  print('---- best shift start: '+str(best_shift_start))
-  # run week schedule again using best shift start time
-  wkd_graph = graphs[0] # edit the original graphs
-  sat_graph = graphs[1] 
-  sun_graph = graphs[2]
-  week_value = 0
+  if best_shift_start == checker.shift_start:
+    start_range = [best_shift_start, (best_shift_start+1+24)%24,(best_shift_start+2+24)%24]
+  elif best_shift_start == checker.shift_start+13-duration:
+    start_range = [(best_shift_start-2+24)%24, (best_shift_start-1+24)%24, best_shift_start]
+  else:
+    start_range = [(best_shift_start-1+24)%24, best_shift_start, (best_shift_start+1+24)%24]
+
   ds_array = [] # day schedule array for the week
-  params = Params(start_time, full_time = checker.ft_work_status)
-  # print('\n')
-  # wkd_graph.print()
   for day in checker.working_days:
+    day_values = []
+    day_value = 0
+    # print('\nconsiderng start_time '+str(start_time))
+    for start_time in start_range:
+      wkd_graph = copy.deepcopy(graphs[0])
+      sat_graph = copy.deepcopy(graphs[1])
+      sun_graph = copy.deepcopy(graphs[2])
+      params = Params(start_time, full_time = checker.ft_work_status)
+
+      if day in [1,2,3,4,5]:
+        gates = wkd_graph
+      elif day == 6:
+        gates = sat_graph
+      else:
+        gates = sun_graph
+      # print("\n")
+      # [0 LIC]
+      # print("\nday: " + str(day) + "\nshift start: " + str(start_time))
+      root = Node(gates.vertices[start_time][0]) # choose the lic node as root node
+      decision_node = MakeMove(root, params)
+      nodes_path, _, _ = print_decision_path(decision_node, root)
+      day_value = get_value(decision_node)
+      # print("path value: " + str(path_value))
+      if day in [1,2,3,4,5]:
+        wkd_graph = delete_nodes(nodes_path, gates)
+      elif day == 6:
+        sat_graph = delete_nodes(nodes_path, gates)
+      else:
+        sun_graph = delete_nodes(nodes_path, gates)
+      day_values.append(day_value)
+      print("day " + str(day) + " day_values: " + str(day_values))
+    # final_best_shift.append(start_range[day_values.index(max(day_values))])
+    # run again using best shift start for each day
+    # start_time = 21
+    print('---- best shift start: '+str(best_shift_start))
+    # run week schedule again using best shift start time
+    wkd_graph = graphs[0] # edit the original graphs
+    sat_graph = graphs[1] 
+    sun_graph = graphs[2]
+    # print('\n')
+    # wkd_graph.print()
+    
+    start_time = start_range[day_values.index(max(day_values))]
+    params = Params(start_time, full_time = checker.ft_work_status)
   # for day in [2]:
     if day in [1,2,3,4,5]:
       gates = wkd_graph
@@ -399,22 +441,21 @@ def week_bfs_for1(graphs, checker): # create schedule for a week (one checker)
     decision_node = MakeMove(root, params)
     # print("\nday: " + str(day) + "\nshift start: " + str(start_time))
     nodes_path, delay_array, travel_time_array = print_decision_path(decision_node, root, True)
-    path_value = get_value(decision_node)
-    week_value += path_value
+    # path_value = get_value(decision_node)
     # print("path value: " + str(path_value))
     if day in [1,2,3,4,5]:
       wkd_graph = delete_nodes(nodes_path, gates)
+      #wkd_graph.add_special_sample()
     elif day == 6:
       sat_graph = delete_nodes(nodes_path, gates)
-      # sat_graph.add_special_sample()
+      #sat_graph.add_special_sample()
     else:
       sun_graph = delete_nodes(nodes_path, gates)
-      # sun_graph.add_special_sample()
+      #sun_graph.add_special_sample()
   
     ds = DaySchedule(checker, day, start_time, start_time+duration, make_gate_array(root), delay_array, travel_time_array)
     ds_array.append(ds)
-  # wkd_graph.add_special_sample()
-  # wkd_graph.print()
+
   print('\n\n---------------- return')
   # return updated graphs after running with best shift start for a week
   return [wkd_graph, sat_graph, sun_graph], WeekSchedule(checker, start_time, start_time+duration, ds_array,)
@@ -422,8 +463,11 @@ def week_bfs_for1(graphs, checker): # create schedule for a week (one checker)
 def week_bfs_forall(graphs, checkers, random_throw = False, throw_probability = .8): # create schedule for a week (all checkers)
   wks_forall = []
   failed_tasks = []
-  for checker in random.sample(checkers, len(checkers)):
+  # for checker in random.sample(checkers, len(checkers)):
   # for checker in checkers:
+  for count,checker in enumerate(random.sample(checkers, len(checkers))):
+    if count % 5 == 0:
+      graphs[0].add_special_sample()
     graphs, wks = week_bfs_for1(graphs, checker)
     if random_throw and random.random() < throw_probability:
       for task in random.choice(wks.DaySchedule_array).gate_array:
@@ -432,10 +476,30 @@ def week_bfs_forall(graphs, checkers, random_throw = False, throw_probability = 
     wks_forall.append(wks)
   return wks_forall, graphs, failed_tasks
 
-def failed_tasks_to_excel_2(failed_tasks):
-  task_dict = {'booth_id': [],'loc': [], 'day': [], 'begin': [], 'end': [], 'sta': [], 'boro': [], 'routes': [], 'staname': [], 'gate_signage': [], 'comments_for_checker': []}
+def failed_tasks_to_excel_1(failed_tasks):
+  task_dict = {'sample_id': [], 'booth_id': [],'loc': [], 'day': [], 'begin': [], 'end': [], 'sta': [], 'boro': [], 'routes': [], 'staname': [], 'gate_signage': [], 'comments_for_checker': []}
   for task in failed_tasks:
-    # task_dict['sample_id'].append('N210' + task.day + str(task.booth_id[1:]).zfill(6))
+    task_dict['sample_id'].append(task.sample_id)
+    task_dict['booth_id'].append(task.booth_id)
+    task_dict['loc'].append(task.loc)
+    task_dict['day'].append(task.day)
+    task_dict['begin'].append((task.begin_time) * 100)
+    task_dict['end'].append((task.begin_time) * 100 + 100)
+    task_dict['sta'].append(task.name)
+    task_dict['boro'].append(task.boro)
+    task_dict['routes'].append(','.join(task.routes))
+    task_dict['staname'].append(task.name)
+    task_dict['gate_signage'].append("")
+    task_dict['comments_for_checker'].append(task.comments)
+
+  df = pd.DataFrame.from_dict(task_dict)
+  df.to_excel("failed_tasks_1.xlsx", index=False)
+  return "failed_tasks_1.xlsx"
+
+def failed_tasks_to_excel_2(failed_tasks):
+  task_dict = {'sample_id': [], 'booth_id': [],'loc': [], 'day': [], 'begin': [], 'end': [], 'sta': [], 'boro': [], 'routes': [], 'staname': [], 'gate_signage': [], 'comments_for_checker': []}
+  for task in failed_tasks:
+    task_dict['sample_id'].append(task.sample_id)
     task_dict['booth_id'].append(task.booth_id)
     task_dict['loc'].append(task.loc)
     task_dict['day'].append(task.day)
@@ -452,44 +516,32 @@ def failed_tasks_to_excel_2(failed_tasks):
   df.to_excel("failed_tasks_2.xlsx", index=False)
   return "failed_tasks_2.xlsx"
 
-def failed_tasks_to_excel_3(failed_tasks):
-  task_dict = {'booth_id': [],'loc': [], 'day': [], 'begin': [], 'end': [], 'sta': [], 'boro': [], 'routes': [], 'staname': [], 'gate_signage': [], 'comments_for_checker': []}
-  for task in failed_tasks:
-    # task_dict['sample_id'].append('N210' + task.day + str(task.booth_id[1:]).zfill(6))
-    task_dict['booth_id'].append(task.booth_id)
-    task_dict['loc'].append(task.loc)
-    task_dict['day'].append(task.day)
-    task_dict['begin'].append((task.begin_time) * 100)
-    task_dict['end'].append((task.begin_time) * 100 + 100)
-    task_dict['sta'].append(task.name)
-    task_dict['boro'].append(task.boro)
-    task_dict['routes'].append(','.join(task.routes))
-    task_dict['staname'].append(task.name)
-    task_dict['gate_signage'].append("")
-    task_dict['comments_for_checker'].append(task.comments)
-
-  df = pd.DataFrame.from_dict(task_dict)
-  df.to_excel("failed_tasks_3.xlsx", index=False)
-  return "failed_tasks_3.xlsx"
-
 def month_bfs_forall(graphs, checkers): # create schedule for a week (all checkers)
   month_forall = []
   failed_tasks_month = []
   for week in range(4):
-    # if(week == 2):
-    #   path = "./" + failed_tasks_to_excel_2(failed_tasks_month[week-2])
-    #   read_tasks.read_failed_tasks(graphs, path)
-    # if(week == 3):
-    #   print("before:\n")
-    #   graphs[0].print()
-    #   graphs[1].print()
-    #   graphs[2].print()
-    #   path = "./" + failed_tasks_to_excel_3(failed_tasks_month[week-2])
-    #   read_tasks.read_failed_tasks(graphs, path)
-    #   print("after:\n")
-    #   graphs[0].print()
-    #   graphs[1].print()
-    #   graphs[2].print()
+    if(week == 2):
+      print("before 2:\n")
+      graphs[0].print()
+      graphs[1].print()
+      graphs[2].print()
+      path = "./" + failed_tasks_to_excel_1(failed_tasks_month[week-2])
+      read_tasks.read_failed_tasks(graphs, path)
+      print("after 2:\n")
+      graphs[0].print()
+      graphs[1].print()
+      graphs[2].print()
+    if(week == 3):
+      print("before 3:\n")
+      graphs[0].print()
+      graphs[1].print()
+      graphs[2].print()
+      path = "./" + failed_tasks_to_excel_2(failed_tasks_month[week-2])
+      read_tasks.read_failed_tasks(graphs, path)
+      print("after 3:\n")
+      graphs[0].print()
+      graphs[1].print()
+      graphs[2].print()
     print('\n\n WEEK'+str(week))
     wks_forall, graphs, failed_tasks_week = week_bfs_forall(graphs, checkers, True)
     month_forall.append(wks_forall)
@@ -503,22 +555,22 @@ def print_schedule(month_forall, filename):
   for weekSchedule in month_forall:
     week1 = wb.add_sheet(weekSchedule.checker.name)
     i = 0
-    for i in range(len(weekSchedule.DaySchedule_array[0].gate_array)):
-      week1.write(i*2+1,0,((weekSchedule.DaySchedule_array[1].shift_start+i)%24)); 
+    # for i in range(len(weekSchedule.DaySchedule_array[0].gate_array)):
+    #   week1.write(i*2+1,0,((weekSchedule.DaySchedule_array[1].shift_start+i)%24)); 
     for daySchedule, i in zip(weekSchedule.DaySchedule_array, range(len(weekSchedule.DaySchedule_array[0].gate_array))):
       week1.write(0,daySchedule.day,days[daySchedule.day-1], style);
       for task, i in zip(daySchedule.gate_array, range(len(daySchedule.gate_array))):
         if(i == len(daySchedule.gate_array)-1):
           time1 = time2
-          time2 = int((weekSchedule.DaySchedule_array[0].shift_start+i+1)%24)
+          time2 = str(int((weekSchedule.DaySchedule_array[0].shift_start+i+1))%24)+ ":00"
         elif(daySchedule.shift_start+i)%24 + daySchedule.delay_array[i]/60.0 < (weekSchedule.DaySchedule_array[0].shift_start+i)%24:
-          time1 = int((weekSchedule.DaySchedule_array[0].shift_start+i)%24)
-          time2 = int((weekSchedule.DaySchedule_array[0].shift_start+i+1)%24)
+          time1 = str(int((weekSchedule.DaySchedule_array[0].shift_start+i))%24) + ":00"
+          time2 = str(int((weekSchedule.DaySchedule_array[0].shift_start+i+1))%24) + ":00"
         else:
           time1 = str((daySchedule.shift_start+i)%24) + ":" + str(daySchedule.delay_array[i]).zfill(2)
           time2 = str((daySchedule.shift_start+i+1)%24) + ":" + str(daySchedule.delay_array[i]).zfill(2)
         
-        week1.write(i*2+1,daySchedule.day, str(time1) + " - " + str(time2), style)
+        week1.write(i*2+1,daySchedule.day, time1 + " - " + time2, style)
         if 'Skip' in task.name or 'LIC' in task.name:
           if daySchedule.checker.ft_work_status == True and i == 2:
             week1.write(i*2+2,daySchedule.day,"lunch break")
