@@ -81,6 +81,7 @@ def read(path):
 
       
   for i in tqdm(range(rows)):
+    sample_id = sheet.loc[i, 'sample_id']
     booth_id = sheet.values[i, 1]
     day = sheet.values[i, 2]
     # begin_time has 24-hour format in form x00 where it actually means x:00
@@ -122,7 +123,7 @@ def read(path):
       print('Location for ' + name + ' not found.')
 
     task = Gate(name = name, boro = boro, loc = loc, routes = routes,
-                booth_id = booth_id, begin_time = begin_time,
+                sample_id = sample_id, booth_id = booth_id, begin_time = begin_time,
                 task_matrix = task_matrix, day = day, comments = comments,
                 availability_priority_holder = availability_priority)
 
@@ -152,6 +153,7 @@ def read(path):
   
   #read special sample
   for i in range(special_rows):
+    sample_id = special.loc[i, 'sample_id']
     booth_id = special.values[i, 1]
     day = special.values[i, 3]
     time_period = special.values[i, 9]
@@ -171,7 +173,8 @@ def read(path):
       print('Location for ' + name + ' not found.')
       
     special_task = Gate(name = name, boro = boro, loc = loc, routes = routes,
-                booth_id = booth_id, day = day, comments = comments)
+                          sample_id = sample_id, booth_id = booth_id, day = day,
+                          comments = comments, task_type = constants.TASK_TYPE[2])
     
     if day == constants.DAY[0]:
       if time_period == 'AM':
@@ -201,6 +204,7 @@ def read(path):
 def read_failed_tasks(graph, file_name):
   tasks = pd.read_excel(file_name)
   for i in range(len(tasks)):
+    sample_id = tasks.loc[i, 'sample_id']
     booth_id = tasks.loc[i, 'booth_id']
     station_name = tasks.loc[i, 'sta']
     loc_str = tasks.loc[i, 'loc']
@@ -211,8 +215,10 @@ def read_failed_tasks(graph, file_name):
     routes_str = tasks.loc[i, 'routes']
     routes = routes_str.split(',')
     comments = tasks.loc[i, 'comments_for_checker']
-    new_gate = Gate(name = station_name, loc = loc, day = day, begin_time = begin_time, boro = boro,
-              routes = routes, comments = comments, booth_id = booth_id)
+    new_gate = Gate(name = station_name, loc = loc, day = day, sample_id = sample_id,
+                      begin_time = begin_time, boro = boro, routes = routes,
+                      comments = comments, booth_id = booth_id,
+                      task_type = constants.TASK_TYPE[1])
     for g in graph:
       if g.day == day:
         daytype = constants.DAY.index(day)

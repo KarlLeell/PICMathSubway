@@ -7,6 +7,8 @@
 
 DAY = ['WKD', 'SAT', 'SUN']
 GRAPH_TYPE = ['NAIVE', 'FINE']
+# N for normal real tasks; R for re-inserted tasks; S for special tasks
+TASK_TYPE = ['N', 'R', 'S']
 # radius of earth in miles
 R = 3961
 LIC_LATITUDE = 40.751767 
