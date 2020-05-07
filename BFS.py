@@ -593,6 +593,9 @@ graphs[0].print()
 graphs[1].print()
 graphs[2].print()
 
+# special tasks remaining (there are probably also some already as vertices in graph)
+print('special tasks left outside of graph', (len(graphs[0].am_special_tasks) + len(graphs[0].pm_special_tasks)))
+
 graphs[0].vertices[8][-1].print()
 graphs[0].vertices[9][-1].print()
 graphs[0].vertices[10][-1].print()
