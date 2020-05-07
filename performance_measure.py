@@ -26,7 +26,7 @@ def completion(MonthSchedule,total_tasks):
     for WeekSchedule in week:
       for DaySchedule in WeekSchedule.DaySchedule_array:
         for task in DaySchedule.gate_array:
-          if 'Skip' not in task.name and 'LIC' not in task.name:
+          if 'Skip' not in task.name and 'LIC' not in task.name and task.task_type != 'S':
             completed_tasks += 1
   print('base tasks completed:', completed_tasks, 'out of', total_tasks)
   print('proportion of base sample completed:', completed_tasks/total_tasks)
