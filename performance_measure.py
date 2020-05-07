@@ -31,4 +31,20 @@ def completion(MonthSchedule,total_tasks):
   print('base tasks completed:', completed_tasks, 'out of', total_tasks)
   print('proportion of base sample completed:', completed_tasks/total_tasks)
   return(completed_tasks/total_tasks)
+
+
+
+def completion_special(MonthSchedule,total_special_tasks):
+  completed_special_tasks = 0
+  for week in MonthSchedule:
+    for WeekSchedule in week:
+      for DaySchedule in WeekSchedule.DaySchedule_array:
+        for task in DaySchedule.gate_array:
+          if task.task_type == 'S':
+            completed_special_tasks += 1
+  print('special tasks completed:', completed_special_tasks, 'out of', total_special_tasks)
+  print('proportion of special sample completed:', completed_special_tasks/total_special_tasks)
+  return(completed_special_tasks/total_special_tasks)
+
+
         
