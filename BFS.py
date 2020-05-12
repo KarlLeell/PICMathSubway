@@ -1,10 +1,3 @@
-import random, os, sys, time
-import numpy as np
-from operator import attrgetter
-import argparse
-from gate import Gate
-import read_tasks as read_tasks
-import read_checkers as read_checkers
 
 import random, os, sys, time, math, argparse, subprocess, json, pickle, copy
 import copy as cp
@@ -17,6 +10,10 @@ from tqdm import tqdm
 import constants
 from DaySchedule import DaySchedule
 from WeekSchedule import WeekSchedule
+from gate import Gate
+import read_tasks as read_tasks
+import read_checkers as read_checkers
+import performance_measure as performance_measure
 
 import xlwt 
 from xlwt import Workbook 
@@ -336,33 +333,24 @@ def week_bfs_for1(graphs, checker): # create schedule for a week (one checker)
     duration = 6
   week_values = []
 
-  # print(range(checker.shift_start, checker.shift_start+13-duration+1))
   for start_time in range(checker.shift_start, checker.shift_start+13-duration+1):
-  # for start_time in [21]:
     wkd_graph = copy.deepcopy(graphs[0])
     sat_graph = copy.deepcopy(graphs[1])
     sun_graph = copy.deepcopy(graphs[2])
     week_value = 0
     params = Params(start_time, full_time = checker.ft_work_status)
-    # print('\nconsiderng start_time '+str(start_time))
-    # wkd_graph.print()
     for day in checker.working_days:
-    # for day in [2]:
       if day in [1,2,3,4,5]:
         gates = wkd_graph
       elif day == 6:
         gates = sat_graph
       else:
         gates = sun_graph
-      # print("\n")
-      # [0 LIC]
-      # print("\nday: " + str(day) + "\nshift start: " + str(start_time))
       root = Node(gates.vertices[start_time][0]) # choose the lic node as root node
       decision_node = MakeMove(root, params)
       nodes_path, _, _ = print_decision_path(decision_node, root)
       path_value = get_value(decision_node)
       week_value += path_value
-      # print("path value: " + str(path_value))
       if day in [1,2,3,4,5]:
         wkd_graph = delete_nodes(nodes_path, gates)
       elif day == 6:
@@ -386,7 +374,6 @@ def week_bfs_for1(graphs, checker): # create schedule for a week (one checker)
   for day in checker.working_days:
     day_values = []
     day_value = 0
-    # print('\nconsiderng start_time '+str(start_time))
     for start_time in start_range:
       wkd_graph = copy.deepcopy(graphs[0])
       sat_graph = copy.deepcopy(graphs[1])
@@ -399,14 +386,10 @@ def week_bfs_for1(graphs, checker): # create schedule for a week (one checker)
         gates = sat_graph
       else:
         gates = sun_graph
-      # print("\n")
-      # [0 LIC]
-      # print("\nday: " + str(day) + "\nshift start: " + str(start_time))
       root = Node(gates.vertices[start_time][0]) # choose the lic node as root node
       decision_node = MakeMove(root, params)
       nodes_path, _, _ = print_decision_path(decision_node, root)
       day_value = get_value(decision_node)
-      # print("path value: " + str(path_value))
       if day in [1,2,3,4,5]:
         wkd_graph = delete_nodes(nodes_path, gates)
       elif day == 6:
@@ -414,44 +397,31 @@ def week_bfs_for1(graphs, checker): # create schedule for a week (one checker)
       else:
         sun_graph = delete_nodes(nodes_path, gates)
       day_values.append(day_value)
-      print("day " + str(day) + " day_values: " + str(day_values))
-    # final_best_shift.append(start_range[day_values.index(max(day_values))])
+
     # run again using best shift start for each day
-    # start_time = 21
     print('---- best shift start: '+str(best_shift_start))
     # run week schedule again using best shift start time
     wkd_graph = graphs[0] # edit the original graphs
     sat_graph = graphs[1] 
     sun_graph = graphs[2]
-    # print('\n')
-    # wkd_graph.print()
     
     start_time = start_range[day_values.index(max(day_values))]
     params = Params(start_time, full_time = checker.ft_work_status)
-  # for day in [2]:
     if day in [1,2,3,4,5]:
       gates = wkd_graph
     elif day == 6:
       gates = sat_graph
     else:
       gates = sun_graph
-    # print("\n")
-    # [0 LIC]
     root = Node(gates.vertices[start_time][0]) # choose the lic node as root node
     decision_node = MakeMove(root, params)
-    # print("\nday: " + str(day) + "\nshift start: " + str(start_time))
     nodes_path, delay_array, travel_time_array = print_decision_path(decision_node, root, True)
-    # path_value = get_value(decision_node)
-    # print("path value: " + str(path_value))
     if day in [1,2,3,4,5]:
       wkd_graph = delete_nodes(nodes_path, gates)
-      #wkd_graph.add_special_sample()
     elif day == 6:
       sat_graph = delete_nodes(nodes_path, gates)
-      #sat_graph.add_special_sample()
     else:
       sun_graph = delete_nodes(nodes_path, gates)
-      #sun_graph.add_special_sample()
   
     ds = DaySchedule(checker, day, start_time, start_time+duration, make_gate_array(root), delay_array, travel_time_array)
     ds_array.append(ds)
@@ -463,15 +433,13 @@ def week_bfs_for1(graphs, checker): # create schedule for a week (one checker)
 def week_bfs_forall(graphs, checkers, random_throw = False, throw_probability = .8): # create schedule for a week (all checkers)
   wks_forall = []
   failed_tasks = []
-  # for checker in random.sample(checkers, len(checkers)):
-  # for checker in checkers:
   for count,checker in enumerate(random.sample(checkers, len(checkers))):
     if count % 5 == 0:
       graphs[0].add_special_sample()
     graphs, wks = week_bfs_for1(graphs, checker)
     if random_throw and random.random() < throw_probability:
       for task in random.choice(wks.DaySchedule_array).gate_array:
-        if('Skip' not in task.name and 'LIC'not in task.name):
+        if('Skip' not in task.name and 'LIC' not in task.name and task.task_type != 'S'):
           failed_tasks.append(task)
     wks_forall.append(wks)
   return wks_forall, graphs, failed_tasks
@@ -555,17 +523,12 @@ def print_schedule(month_forall, filename):
   for weekSchedule in month_forall:
     week1 = wb.add_sheet(weekSchedule.checker.name)
     i = 0
-    # for i in range(len(weekSchedule.DaySchedule_array[0].gate_array)):
-    #   week1.write(i*2+1,0,((weekSchedule.DaySchedule_array[1].shift_start+i)%24)); 
     for daySchedule, i in zip(weekSchedule.DaySchedule_array, range(len(weekSchedule.DaySchedule_array[0].gate_array))):
       week1.write(0,daySchedule.day,days[daySchedule.day-1], style);
       for task, i in zip(daySchedule.gate_array, range(len(daySchedule.gate_array))):
         if(i == len(daySchedule.gate_array)-1):
           time1 = time2
-          time2 = str(int((weekSchedule.DaySchedule_array[0].shift_start+i+1))%24)+ ":00"
-        elif(daySchedule.shift_start+i)%24 + daySchedule.delay_array[i]/60.0 < (weekSchedule.DaySchedule_array[0].shift_start+i)%24:
-          time1 = str(int((weekSchedule.DaySchedule_array[0].shift_start+i))%24) + ":00"
-          time2 = str(int((weekSchedule.DaySchedule_array[0].shift_start+i+1))%24) + ":00"
+          time2 = str((daySchedule.shift_start+i+1)%24) + ":00"
         else:
           time1 = str((daySchedule.shift_start+i)%24) + ":" + str(daySchedule.delay_array[i]).zfill(2)
           time2 = str((daySchedule.shift_start+i+1)%24) + ":" + str(daySchedule.delay_array[i]).zfill(2)
@@ -593,18 +556,13 @@ graphs[0].print()
 graphs[1].print()
 graphs[2].print()
 
-graphs[0].vertices[8][-1].print()
-graphs[0].vertices[9][-1].print()
-graphs[0].vertices[10][-1].print()
-graphs[0].vertices[11][-1].print()
-graphs[0].vertices[0][-1].print()
-graphs[0].vertices[23][-1].print()
-
 print_schedule(month_forall[0], 'week1.xls')
 print_schedule(month_forall[1], 'week2.xls')
 print_schedule(month_forall[2], 'week3.xls')
 print_schedule(month_forall[3], 'week4.xls')
 
+dbfile = open('./month_forall.pickle', 'ab')
+pickle.dump(month_forall, dbfile)
 
-
-
+performance_measure.completion(145,158)
+performance_measure.efficiency()
