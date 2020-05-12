@@ -61,6 +61,7 @@ def read(path):
     for j in range(24):
       availability_book[i][j] = 0
   for i in range(19, 31):
+  # values 19,31 correspond to range of checkers assigned to subway
     shift_end_time = int(int(checker_schedule.values[i,3]) / 100 - 1)
     shift_start_time = int(int(checker_schedule.values[i,2]) / 100 + 1)
     days_off = checker_schedule.values[i,5]
@@ -171,17 +172,17 @@ def read(path):
                           sample_id = sample_id, booth_id = booth_id, day = day,
                           comments = comments, task_type = constants.TASK_TYPE[2])
     
-    if task.day == constants.DAY[0]:
+    if day == constants.DAY[0]:
       if time_period == 'AM':
         wkd_graph.am_special_tasks.append(special_task)
       elif time_period == 'PM':
         wkd_graph.pm_special_tasks.append(special_task)
-    elif task.day == constants.DAY[1]:
+    elif day == constants.DAY[1]:
       if time_period == 'AM':
         sat_graph.am_special_tasks.append(special_task)
       elif time_period == 'PM':
         sat_graph.pm_special_tasks.append(special_task)
-    elif task.day == constants.DAY[2]:
+    elif day == constants.DAY[2]:
       if time_period == 'AM':
         sun_graph.am_special_tasks.append(special_task)
       elif time_period == 'PM':
@@ -213,7 +214,7 @@ def read_failed_tasks(graph, file_name):
     new_gate = Gate(name = station_name, loc = loc, day = day, sample_id = sample_id,
                       begin_time = begin_time, boro = boro, routes = routes,
                       comments = comments, booth_id = booth_id,
-                      task_type = constans.TASK_TYPE[1])
+                      task_type = constants.TASK_TYPE[1])
     for g in graph:
       if g.day == day:
         daytype = constants.DAY.index(day)
