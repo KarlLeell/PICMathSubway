@@ -1,5 +1,5 @@
-# PICMathSubway FEC Data Collection Scheduler
-This is the repository of PICMathSubway group in Spring 2020 at NYU. The project includes an automatic scheduler of Fare Evasion Control Data Collection for MTA.
+# PICMathSubway Fare Evasion Control Data Collection Scheduler for Metropolitan Transportation Authority
+This is the repository of PICMathSubway group in Spring 2020 at NYU. The project includes an automatic scheduler of FEC Data Collection for MTA.
 
 ## Authors
 Chengchen Li, 
@@ -24,7 +24,9 @@ Before running the following command, OTP server must be running on port 8080 (i
 You need to also edit file `constants.py` variable `DATE` to the corresponding date to be scheduled.
 
 Then run the following command to generate the three graphs:
-`python3 read_tasks.py -f base_file -i station_file -s location_file -c checker_file -p special_file`
+```
+python3 read_tasks.py -f base_file -i station_file -s location_file -c checker_file -p special_file
+```
 
 Or you can call the function `read` in `read_tasks.py` which will return the three graphs for weekdays, Saturday, and Sunday. Meanwhile, the three graphs will be pickled and saved as `wkd_save.pkd`, `sat_save.pkl`, and `sun_save.pkl`
 
