@@ -85,7 +85,7 @@ class Gate(Station):
     str3 = """&time="""
     # x:xam/pm
     am_pm = 'am' if self.begin_time < 12 else 'pm'
-    time = str(self.begin_time % 12) + am_pm
+    time = str(self.begin_time % 12) + ':00' + am_pm
     str4 = """&date="""
     str5 = """&mode=TRANSIT,WALK&maxWalkDistance=500&arriveBy=false'"""
     loc1 = str(self.loc)[1:-1].replace(' ', '')
