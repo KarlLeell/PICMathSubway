@@ -2,7 +2,7 @@
 This is the repository of PICMathSubway group in Spring 2020 at NYU. The project includes an automatic scheduler of Fare Evasion Control Data Collection for MTA.
 
 ## Required Packages
-`numpy`, `pandas`, `tqdm`, `pickle`, `scipy`, `xlwt`.
+`numpy`, `pandas`, `tqdm`, `pickle`, `scipy`, `xlwt`, `random`.
 
 ## Required Data
 1. File of the base sample tasks `base_file`.
@@ -35,6 +35,6 @@ To simulate failed tasks for testing purposes, inside the function `month_bfs_fo
 Then the function `read_failed_tasks` in `month_bfs_forall` reads the excel files with the failed tasks and reinserts these tasks into the current graph.
 
 ### Special Samples
-The function `week_bfs_forall` in `BFS.py` inserts special samples into sparse layers of the graph three times a week, depedning on the number of checkers, while generating weekly schedules, 
+The function `week_bfs_forall` in `BFS.py` inserts special samples into sparse layers of the graph three times a week, depending on the number of checkers, while generating weekly schedules, 
 
 ## Acknowledgement
