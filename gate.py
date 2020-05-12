@@ -23,10 +23,10 @@ class Gate(Station):
 
 
   def __init__(self, name = '', sample_id = '', loc = None, boro = '', routes = None,
-                booth_id = '', begin_time = 0, task_matrix = np.zeros((24*12, 1)),
-                day = '', neighbors = None, edge_dist_tt = None, dist_prio = None,
-                comments = '', dummy_value = 0, availability_priority_holder = 0,
-                availability_priority = 0, task_type = constants.TASK_TYPE[0]):
+                booth_id = '', begin_time = 0, day = '', neighbors = None,
+                edge_dist_tt = None, dist_prio = None, comments = '', dummy_value = 0,
+                availability_priority_holder = 0, availability_priority = 0,
+                task_type = constants.TASK_TYPE[0]):
 
     # inherited attribute
     #self.name_ = name
@@ -38,7 +38,6 @@ class Gate(Station):
     # self attributes
     self.sample_id = sample_id
     self.begin_time = begin_time
-    self.task_matrix = task_matrix
     self.day = day
     self.neighbors = neighbors if neighbors is not None else []
     self.edge_dist_tt = edge_dist_tt if edge_dist_tt is not None else []
@@ -83,12 +82,16 @@ class Gate(Station):
   def extract_travel_time(self, dst_gate, date):
     str1 = """ 'http://localhost:8080/otp/routers/default/plan?fromPlace="""
     str2 = """&toPlace="""
-    str3 = """&time=1:02pm&date="""
-    str4 = """&mode=TRANSIT,WALK&maxWalkDistance=500&arriveBy=false'"""
+    str3 = """&time="""
+    # x:xam/pm
+    am_pm = 'am' if self.begin_time < 12 else 'pm'
+    time = str(self.begin_time % 12) + am_pm
+    str4 = """&date="""
+    str5 = """&mode=TRANSIT,WALK&maxWalkDistance=500&arriveBy=false'"""
     loc1 = str(self.loc)[1:-1].replace(' ', '')
     loc2 = str(dst_gate.loc)[1:-1].replace (' ', '')
-    str5 = str1 + loc1 + str2 + loc2 + str3 + date + str4
-    request = "curl" + str5
+    str6 = str1 + loc1 + str2 + loc2 + str3 + time + str4 + date + str5
+    request = "curl" + str6
 
     process = subprocess.run(request, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     output = process.stdout.decode('utf8')
@@ -97,7 +100,7 @@ class Gate(Station):
     if plan:
       distance = float(plan['itineraries'][0]['duration']) / 60
     else:
-      if self.calc_abs_dist(dst_gate) < 0.5:
+      if self.calc_abs_dist(dst_gate) < 0.25:
         distance = 10
       else:
         distance = 100
