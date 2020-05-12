@@ -61,6 +61,7 @@ def read(path):
     for j in range(24):
       availability_book[i][j] = 0
   for i in range(19, 31):
+  # values 19,31 correspond to range of checkers assigned to subway
     shift_end_time = int(int(checker_schedule.values[i,3]) / 100 - 1)
     shift_start_time = int(int(checker_schedule.values[i,2]) / 100 + 1)
     days_off = checker_schedule.values[i,5]
