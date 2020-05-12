@@ -1,6 +1,13 @@
 # PICMathSubway FEC Data Collection Scheduler
 This is the repository of PICMathSubway group in Spring 2020 at NYU. The project includes an automatic scheduler of Fare Evasion Control Data Collection for MTA.
 
+## Authors
+Chengchen Li, 
+David Khudoyan, 
+Jake Liu, 
+Nisha Sukumar, 
+Yichen Li.
+
 ## Required Packages
 `numpy`, `pandas`, `tqdm`, `pickle`, `scipy`, `xlwt`, `random`.
 
