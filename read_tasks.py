@@ -91,8 +91,6 @@ def read(path):
     routes_str = str(sheet.values[i, 7])
     name = str(sheet.values[i, 8])
     routes = routes_str.split(',')
-    task_matrix = np.zeros((24*12, 1))
-    begin_entry = 12 * begin_time
     comments = sheet.values[i, 10]
     # calculate availability priority
     if day == constants.DAY[0]:
@@ -109,9 +107,6 @@ def read(path):
     if availability_priority == 1:
       availability_priority += 1 #test buffer value
 
-    # mark the matrix
-    for i in range(begin_entry, begin_entry+12):
-      task_matrix[i, 0] = 1
     # get location of a station
     station_id = station_id_book.get(str(booth_id))
     if not station_id:
@@ -123,8 +118,8 @@ def read(path):
       print('Location for ' + name + ' not found.')
 
     task = Gate(name = name, boro = boro, loc = loc, routes = routes,
-                sample_id = sample_id, booth_id = booth_id, begin_time = begin_time,
-                task_matrix = task_matrix, day = day, comments = comments,
+                sample_id = sample_id, booth_id = booth_id,
+                begin_time = begin_time, day = day, comments = comments,
                 availability_priority_holder = availability_priority)
 
     # adding vertex to graph
