@@ -2,7 +2,7 @@
 This is the repository of PICMathSubway group in Spring 2020 at NYU. The project includes an automatic scheduler of Fare Evasion Control Data Collection for MTA.
 
 ## Required Packages
-`numpy`, `pandas`, `tqdm`, `pickle`, `scipy`.
+`numpy`, `pandas`, `tqdm`, `pickle`, `scipy`, `xlwt`.
 
 ## Required Data
 1. File of the base sample tasks `base_file`.
@@ -24,10 +24,17 @@ The function `read` in `read_tasks.py` will return the three graphs for weekdays
 ## Schedule Generation
 
 ### Weekly Schedule
+To generate a weekly schedule for all the checkers run the function `week_bfs_forall` in `BFS.py`. This function returns an array of `WeekSchedules`, one `WeekSchedule` for each checker, an array of the three modifies graphs, and an array of the simulated failed tasks.
 
 ### Monthly Schedule
+To generate a monthly schedule for all the checkers run `BFS.py`. This will produce four excel files, one for each week of the month, with weekly schedules for each checker sperated by sheets.
 
 ### Failed Tasks
+To simulate failed tasks for testing purposes, inside the function `month_bfs_forall` in `BFS.py` there is a call to the function `failed_tasks_to_excel1` and `failed_tasks_to_excel2` which generates the excel files for incomplete tasks from the first and second week respectively.
 
+Then the function `read_failed_tasks` in `month_bfs_forall` reads the excel files with the failed tasks and reinserts these tasks into the current graph.
+
+### Special Samples
+The function `week_bfs_forall` in `BFS.py` inserts special samples into sparse layers of the graph three times a week, depedning on the number of checkers, while generating weekly schedules, 
 
 ## Acknowledgement
