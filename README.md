@@ -19,7 +19,7 @@ You need to also edit file `constants.py` variable `DATE` to the corresponding d
 Then run the following command to generate the three graphs:
 `python3 read_tasks.py -f base_file -i station_file -s location_file -c checker_file -p special_file`
 
-If calling the function `read`, it will return the three graphs. Meanwhile, the three graphs will be pickled and saved as `wkd_save.pkd`, `sat_save.pkl`, and `sun_save.pkl`
+The function `read` in `read_tasks.py` will return the three graphs for weekdays, Saturday, and Sunday. Meanwhile, the three graphs will be pickled and saved as `wkd_save.pkd`, `sat_save.pkl`, and `sun_save.pkl`
 
 ## Schedule Generation
 
