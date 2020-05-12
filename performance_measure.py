@@ -58,5 +58,5 @@ def completion(total_tasks, total_special_tasks):
   print('special tasks completed:', completed_special_tasks, 'out of', total_special_tasks)
   print('proportion of special sample completed:', completed_special_tasks/total_special_tasks)
 
-completion(145, 158)
-efficiency()
+# completion(145, 158)
+# efficiency()
