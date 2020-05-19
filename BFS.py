@@ -83,6 +83,7 @@ def InitializeChildren(node, cumm_delay, params):
     # child.value = node.calc_dist_priority(i) + child.availability_priority
     node.children.append(child)
     return node.children
+  # print(node.gate.name)
   for i in range(1,len(node.gate.neighbors)): # normal hour, ignore the LIC node
     if verbose:
       print('\n\t\tConsidering node '+str(node.gate.neighbors[i].name))
@@ -97,14 +98,23 @@ def InitializeChildren(node, cumm_delay, params):
       print('\t\tnode.gate.begin_time + duration + node.gate.edge_dist_tt[i]/60.0 = '+str((node.gate.begin_time + duration) + node.gate.edge_dist_tt[i]/60.0))
     if node.gate.begin_time == 23: # overnight task
       duration -= 24 # -23 for a real task, -24 for skip node
+    
+    # if 'Skip' in node.gate.neighbors[i].name :
+    #   print(node.gate.neighbors[i].name)
+    #   print('\t\tnode.gate.neighbors[i].begin_time + 0.2 = '+str(node.gate.neighbors[i].begin_time + 0.2))
+    #   print('\t\tnode.gate.begin_time + duration + node.gate.edge_dist_tt[i]/60.0 = '+str((node.gate.begin_time + duration) + node.gate.edge_dist_tt[i]/60.0))
     if (node.gate.neighbors[i].begin_time + 0.2 >= (node.gate.begin_time + duration) + node.gate.edge_dist_tt[i]/60.0 and cumm_delay/60.0 + node.gate.edge_dist_tt[i]/60.0 <= .5):
       # if viable in terms of start time and 12 minutes delay
       if verbose:
         print('\t\t\tviable in terms of start time')
+      # if 'Skip' in node.gate.neighbors[i].name:
+      #   print('\t\t\tviable in terms of start time')
       if(CheckLicDist(node.gate.neighbors[i], cumm_delay, params)):
         # if can return to LIC on time
         if verbose:
           print('\t\t\tviable to return to LIC')
+        # if 'Skip' in node.gate.neighbors[i].name:
+        #   print('\t\t\tviable to return to LIC')
         child = Node(node.gate.neighbors[i])
         child.parent = node
         child.heuristic_value(node, i)
@@ -113,11 +123,14 @@ def InitializeChildren(node, cumm_delay, params):
         if verbose:
           print("\t\t\tadd child "+str(child.gate.name) +", value "+str(child.value))
           print('\t\tnode dist_prio='+str(node.calc_dist_priority(i))+', avail_prio='+str(child.availability_priority))
+        # if 'Skip' in node.gate.neighbors[i].name:
+        #   print("\t\t\tadd child "+str(child.gate.name) +", value "+str(child.value))
+        #   print('\t\tnode dist_prio='+str(node.calc_dist_priority(i))+', avail_prio='+str(child.availability_priority))
   if(CheckLicDist(node.gate, cumm_delay, params, 1) == False):
     if verbose:
       print('\tcurrent node is terminal, no children expanded: '+str(node.gate.name))
-    node.children = []
-    node.terminate = True
+      node.children = []
+      node.terminate = True
 
   return node.children
 
@@ -132,7 +145,7 @@ def CheckLicDist(gate, cumm_delay, params, extra_time = 0):
     result = params.checker_shift_end - (gate.begin_time + 1 + extra_time + gate.edge_dist_tt[0]/60.0 + cumm_delay/60.0)
   if verbose:
     print(result)
-  return result > 0
+  return result >= 0
 
 def SelectNode(root):
   cumm_delay = 0
@@ -196,6 +209,9 @@ def ArgmaxChild(node):
   ''' return the child with max value '''
   if verbose: 
     print('ArgmaxChild '+str(node.gate.name))
+    if len(node.children) == 0:
+      print(node.gate.name + " " + str(node.gate.neighbors))
+      graphs[0].print()
   maxchild = node.children[0]
   for i in range(len(node.children)):
     if node.children[i].value >= maxchild.value:
@@ -439,7 +455,8 @@ def week_bfs_forall(graphs, checkers, random_throw = False, throw_probability = 
     graphs, wks = week_bfs_for1(graphs, checker)
     if random_throw and random.random() < throw_probability:
       for task in random.choice(wks.DaySchedule_array).gate_array:
-        if('Skip' not in task.name and 'LIC' not in task.name and task.task_type != 'S'):
+        # if('Skip' not in task.name and 'LIC' not in task.name and task.task_type != 'S'):
+        if('Skip' not in task.name and 'LIC' not in task.name):
           failed_tasks.append(task)
     wks_forall.append(wks)
   return wks_forall, graphs, failed_tasks
@@ -566,3 +583,34 @@ pickle.dump(month_forall, dbfile)
 
 performance_measure.completion(145,158)
 performance_measure.efficiency()
+
+
+# try:
+#   month_forall, failed_tasks_month = month_bfs_forall(graphs, checkers)
+
+#   graphs[0].print()
+#   graphs[1].print()
+#   graphs[2].print()
+
+#   print_schedule(month_forall[0], 'week1.xls')
+#   print_schedule(month_forall[1], 'week2.xls')
+#   print_schedule(month_forall[2], 'week3.xls')
+#   print_schedule(month_forall[3], 'week4.xls')
+
+#   dbfile = open('./month_forall.pickle', 'ab')
+#   pickle.dump(month_forall, dbfile)
+
+#   performance_measure.completion(145,158)
+#   performance_measure.efficiency()
+
+# except:
+#   graphs[0].print()
+#   graphs[1].print()
+#   graphs[2].print()
+
+#   wkd = open('wkd_save_error.pickle', 'wb')
+#   pickle.dump(graphs[0], wkd)
+#   sat = open('sat_save_error.pickle', 'wb')
+#   pickle.dump(graphs[1], sat)
+#   sun = open('sun_save_error.pickle', 'wb')
+#   pickle.dump(graphs[2], sun)
