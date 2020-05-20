@@ -24,7 +24,7 @@ class Station:
   # return the location
   def abs_loc(self):
     if self.loc != []:
-      return self.loc
+      return [float(i) for i in self.loc]
     else:
       return [0,0]
 
