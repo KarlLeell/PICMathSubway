@@ -577,10 +577,7 @@ TODO: fill in the function explanation here
 
 ### def efficiency
 
-This function measures how efficient a monthly schedule is. It reads the monthly schedule and then calculates and prints out the following figures:
--total working hours
--total checking hours
--working efficiency (total checking hours / total working hours)
+This function measures how efficient a monthly schedule is. It reads the monthly schedule and then calculates and prints out the following figures: total working hours, total checking hours, working efficiency (total checking hours / total working hours).
 
 ##### INPUTS
 
@@ -588,13 +585,7 @@ This function measures how efficient a monthly schedule is. It reads the monthly
 
 ### def completion
 
-This function reads a monthly schedule, calculates how many tasks of each type are completed and prints out the following:
--base tasks completed
--proportion of base sample completed
--rescheduled tasks completed
--proportion of rescheduled tasks completed
--special tasks completed
--proportion of special tasks completed
+This function reads a monthly schedule, calculates how many tasks of each type are completed and prints out the following: base tasks completed, proportion of base sample completed, rescheduled tasks completed, proportion of rescheduled tasks completed, special tasks completed, proportion of special tasks completed.
 
 ##### INPUTS
 
