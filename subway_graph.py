@@ -316,6 +316,7 @@ class Graph():
 
   def fine_del_vertex(self, vertex):
     name = vertex.name
+    skip_vertex = None
     if 'GSkip' not in name and 'Skip_' not in name and 'LIC' not in name:
       for next_vertex in vertex.neighbors:
         if 'Skip_' in next_vertex.name:
@@ -324,7 +325,8 @@ class Graph():
       # this is not actually necessary in current implementation, as the only
       #   vertex that points to a private skipping vertex will be deleted too
       #   we can simply remove it from the list of vertices
-      self.naive_del_vertex(skip_vertex)
+      if skip_vertex:
+        self.naive_del_vertex(skip_vertex)
     self.naive_del_vertex(vertex)
     
     return True
