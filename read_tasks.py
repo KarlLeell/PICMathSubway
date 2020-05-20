@@ -205,6 +205,7 @@ def read_failed_tasks(graph, file_name):
     station_name = tasks.loc[i, 'sta']
     loc_str = tasks.loc[i, 'loc']
     loc = loc_str[1:len(loc_str)-1].split(',')
+    loc = [float(i) for i in loc]
     day = tasks.loc[i, 'day']
     begin_time = int(tasks.loc[i, 'begin'] / 100)
     boro = tasks.loc[i, 'boro']
