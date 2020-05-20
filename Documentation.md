@@ -356,31 +356,30 @@ TODO: fill in the function explanation here
 
 #### def __init__
 
-TODO: fill in the function explanation here
+This function initializes the class object and its attributes in the checker class.
 
 ##### INPUTS
 
-    self : TODO
+    self : class object
 
-    name : TODO
+    name : name of each checker
 
-    shift_start : TODO
+    shift_start : beginning time of the checker's shift
 
-    shift_end : TODO
+    shift_end : end time of the checker's shift
 
-    ft_work_status : TODO
+    ft_work_status : denotes if a checker works full time or part time
 
-    rdo : TODO
+    rdo : regular days off
 
-    working_days : TODO
+    working_days : working days
 
 #### def print
 
-TODO: fill in the function explanation here
-
+This function prints out the name of the checker as well as the checker's start time.
 ##### INPUTS
 
-    self : TODO
+    self : class object
 
 ## constants.py
 
@@ -577,21 +576,21 @@ TODO: fill in the function explanation here
 
 ### def efficiency
 
-TODO: fill in the function explanation here
+This function measures how efficient a monthly schedule is. It reads the monthly schedule and then calculates and prints out the following figures: total working hours, total checking hours, working efficiency (total checking hours / total working hours).
 
 ##### INPUTS
 
-     : TODO
+     
 
 ### def completion
 
-TODO: fill in the function explanation here
+This function reads a monthly schedule, calculates how many tasks of each type are completed and prints out the following: base tasks completed, proportion of base sample completed, rescheduled tasks completed, proportion of rescheduled tasks completed, special tasks completed, proportion of special tasks completed.
 
 ##### INPUTS
 
-    total_tasks : TODO
+    total_tasks : number of tasks in base sample
 
-    total_special_tasks : TODO
+    total_special_tasks : number of tasks in special sample
 
 ## read_checkers.py
 
@@ -727,65 +726,65 @@ TODO: fill in the function explanation here
 
 #### def __init__
 
-TODO: fill in the function explanation here
+This function initializes the station class object and its attributes.
 
 ##### INPUTS
 
-    self : TODO
+    self : class object
 
-    name : TODO
+    name : station name
 
-    booth_id : TODO
+    booth_id : station booth id
 
-    loc : TODO
+    loc : location of station in terms of geographic coordinates
 
-    boro : TODO
+    boro : station borough
 
-    routes : TODO
+    routes : routes station is on
 
 #### def abs_loc
 
-TODO: fill in the function explanation here
+This function returns the location of the station
 
 ##### INPUTS
 
-    self : TODO
+    self : class object
 
 ##### OUTPUTS
-    [float(i)foriinself.loc] : TODO
+    [float(i)foriinself.loc] : station's location in geographic coordinates
 
 ##### OUTPUTS
-    [0 : TODO
+    [0 : empty latitude
 
-    0] : TODO
+    0] : empty longitude
 
 #### def set_station
 
-TODO: fill in the function explanation here
+This function provides updated information on the station object
 
 ##### INPUTS
 
-    self : TODO
+    self : class object
 
-    name : TODO
+    name : station name
 
-    booth_id : TODO
+    booth_id : station booth id
 
-    loc : TODO
+    loc : station location in geographic coordinates 
 
-    0] : TODO
+    0] : empty longtiude coordinate
 
-    boro : TODO
+    boro : station borough
 
-    routes : TODO
+    routes : route station is on
 
 #### def print
 
-TODO: fill in the function explanation here
+This function prints the station object's name, booth id, location, borough, and routes it is on.
 
 ##### INPUTS
 
-    self : TODO
+    self : class object
 
 ## subway_graph.py
 
