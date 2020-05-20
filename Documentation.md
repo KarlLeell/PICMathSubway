@@ -577,21 +577,30 @@ TODO: fill in the function explanation here
 
 ### def efficiency
 
-TODO: fill in the function explanation here
+This function measures how efficient a monthly schedule is. It reads the monthly schedule and then calculates and prints out the following figures:
+-total working hours
+-total checking hours
+-working efficiency (total checking hours / total working hours)
 
 ##### INPUTS
 
-     : TODO
+     
 
 ### def completion
 
-TODO: fill in the function explanation here
+This function reads a monthly schedule, calculates how many tasks of each type are completed and prints out the following:
+-base tasks completed
+-proportion of base sample completed
+-rescheduled tasks completed
+-proportion of rescheduled tasks completed
+-special tasks completed
+-proportion of special tasks completed
 
 ##### INPUTS
 
-    total_tasks : TODO
+    total_tasks : number of tasks in base sample
 
-    total_special_tasks : TODO
+    total_special_tasks : number of tasks in special sample
 
 ## read_checkers.py
 
