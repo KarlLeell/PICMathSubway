@@ -325,6 +325,10 @@ class Graph():
       # this is not actually necessary in current implementation, as the only
       #   vertex that points to a private skipping vertex will be deleted too
       #   we can simply remove it from the list of vertices
+      if not skip_vertex:
+        print("Inside fine_del_vertex")
+        print("vertex: " + vertex.name)
+        print("neighbors: " + str(vertex.neighbors))
       if skip_vertex:
         self.naive_del_vertex(skip_vertex)
     self.naive_del_vertex(vertex)

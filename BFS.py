@@ -129,8 +129,8 @@ def InitializeChildren(node, cumm_delay, params):
   if(CheckLicDist(node.gate, cumm_delay, params, 1) == False):
     if verbose:
       print('\tcurrent node is terminal, no children expanded: '+str(node.gate.name))
-      node.children = []
-      node.terminate = True
+    node.children = []
+    node.terminate = True
 
   return node.children
 
@@ -580,37 +580,3 @@ print_schedule(month_forall[3], 'week4.xls')
 
 dbfile = open('./month_forall.pickle', 'ab')
 pickle.dump(month_forall, dbfile)
-
-performance_measure.completion(145,158)
-performance_measure.efficiency()
-
-
-# try:
-#   month_forall, failed_tasks_month = month_bfs_forall(graphs, checkers)
-
-#   graphs[0].print()
-#   graphs[1].print()
-#   graphs[2].print()
-
-#   print_schedule(month_forall[0], 'week1.xls')
-#   print_schedule(month_forall[1], 'week2.xls')
-#   print_schedule(month_forall[2], 'week3.xls')
-#   print_schedule(month_forall[3], 'week4.xls')
-
-#   dbfile = open('./month_forall.pickle', 'ab')
-#   pickle.dump(month_forall, dbfile)
-
-#   performance_measure.completion(145,158)
-#   performance_measure.efficiency()
-
-# except:
-#   graphs[0].print()
-#   graphs[1].print()
-#   graphs[2].print()
-
-#   wkd = open('wkd_save_error.pickle', 'wb')
-#   pickle.dump(graphs[0], wkd)
-#   sat = open('sat_save_error.pickle', 'wb')
-#   pickle.dump(graphs[1], sat)
-#   sun = open('sun_save_error.pickle', 'wb')
-#   pickle.dump(graphs[2], sun)
