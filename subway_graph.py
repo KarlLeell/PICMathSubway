@@ -11,6 +11,7 @@ import constants
 from queue import Queue
 from scipy import stats
 import random
+import copy
 
 
 
@@ -414,6 +415,31 @@ class Graph():
     self.normalize_distance_priority()
   
   
+  def graph_correctness_verify(self):
+    # check if root connects to every vertex in layer 0
+    if self.empty_vertex.neighbors != self.vertices[0]:
+      print('Root not connecting to all vertices in layer 0')
+      print('Root neighbors: ' + self.empty_vertex.neighbors)
+      print('Vertices in layer 0: ' + self.vertices[0])
+    for layer in self.vertices:
+      for vertex in layer:
+        # check if distance and priority lists have the same length
+        n_neighbors = len(vertex.neighbors)
+        if len(vertex.edge_dist_tt) != n_neighbors or len(vertex.dist_prio) != n_neighbors:
+          print('The following task has different length of lists:')
+          vertex.print()
+        # check if real tasks connect to their private skipping
+        if 'LIC' in vertex.name or 'Skip' in vertex.name:
+          continue
+        private_skip = None
+        for next_vertex in vertex.neighbors:
+          if next_vertex.name=='Skip_' + vertex.name and next_vertex.booth_id==vertex.booth_id:
+            private_skip = next_vertex
+            break
+        if not private_skip:
+          print('The following task does not connect to a private skipping vertex:')
+          vertex.print()
+    print('Graph verification finished')
   
   
   def print(self):

@@ -188,6 +188,10 @@ def read(path):
       elif time_period == 'PM':
         sun_graph.pm_special_tasks.append(special_task)
  
+  wkd_graph.graph_correctness_verify()
+  sat_graph.graph_correctness_verify()
+  sun_graph.graph_correctness_verify()
+
   
   with open('wkd_save.pkl','wb') as wkd, open('sat_save.pkl', 'wb') as sat, open('sun_save.pkl', 'wb') as sun:
     pickle.dump(wkd_graph, wkd)
