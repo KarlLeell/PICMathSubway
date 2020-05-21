@@ -102,7 +102,7 @@ class Gate(Station):
     plans = json.loads(output)
     plan = plans.get('plan')
     if plan:
-      distance = float(plan['itineraries'][0]['duration']) / 60 + 10
+      distance = float(plan['itineraries'][0]['duration']) / 60 + 6
     else:
       if self.calc_abs_dist(dst_gate) < 0.25:
         distance = 20
